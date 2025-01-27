@@ -1,21 +1,26 @@
 package service
 
 import (
-	"context"
 	"testing"
-	user "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/user"
 )
 
 func TestRegister_Run(t *testing.T) {
-	ctx := context.Background()
-	s := NewRegisterService(ctx)
-	// init req and assert value
+	// TODO: 基于 sqlite，实现 mock 数据库逻辑
 
-	req := &user.RegisterReq{}
-	resp, err := s.Run(req)
-	t.Logf("err: %v", err)
-	t.Logf("resp: %v", resp)
+	// godotenv.Load("../../.env")
+	// mysql.Init()
+	// ctx := context.Background()
+	// s := NewRegisterService(ctx)
+	// // init req and assert value
 
-	// todo: edit your unit test
+	// req := &user.RegisterReq{
+	// 	Email:           "test@test.com",
+	// 	Password:        "password-test",
+	// 	ConfirmPassword: "password-test",
+	// }
+	// resp, err := s.Run(req)
+	// t.Logf("err: %v", err)
+	// t.Logf("resp: %v", resp)
 
+	// // todo: edit your unit test
 }

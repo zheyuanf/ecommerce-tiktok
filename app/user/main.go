@@ -7,7 +7,9 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
+	"github.com/zheyuanf/ecommerce-tiktok/app/user/biz/dal"
 	"github.com/zheyuanf/ecommerce-tiktok/app/user/conf"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/user/userservice"
 	"go.uber.org/zap/zapcore"
@@ -15,11 +17,20 @@ import (
 )
 
 func main() {
+	// 加载 .env 文件中的环境变量
+	err := godotenv.Load()
+	if err != nil {
+		klog.Error(err.Error())
+	}
+
+	// 初始化数据库连接
+	dal.Init()
+
 	opts := kitexInit()
 
 	svr := userservice.NewServer(new(UserServiceImpl), opts...)
 
-	err := svr.Run()
+	err = svr.Run()
 	if err != nil {
 		klog.Error(err.Error())
 	}
