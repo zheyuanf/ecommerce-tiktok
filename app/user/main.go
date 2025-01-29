@@ -11,10 +11,13 @@ import (
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	"github.com/zheyuanf/ecommerce-tiktok/app/user/biz/dal"
 	"github.com/zheyuanf/ecommerce-tiktok/app/user/conf"
+	"github.com/zheyuanf/ecommerce-tiktok/common/serversuite"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/user/userservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
+
+var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
 	// 加载 .env 文件中的环境变量
@@ -46,8 +49,11 @@ func kitexInit() (opts []server.Option) {
 
 	// service info
 	opts = append(opts, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
-		ServiceName: conf.GetConf().Kitex.Service,
+		ServiceName: serviceName,
 	}))
+
+	// 设置server的服务注册等配置
+	opts = append(opts, server.WithSuite(serversuite.CommonServerSuite{CurrentServiceName: serviceName, RegistryAddr: conf.GetConf().Registry.RegistryAddress[0]}))
 
 	// klog
 	logger := kitexlogrus.NewLogger()
