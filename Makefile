@@ -38,3 +38,9 @@ env-stop: ## stop all docker
 .PHONY: clean
 clean: ## clern up all the tmp files
 	@rm -r app/**/log/ app/**/tmp/
+
+##@ 打开浏览器
+
+.PHONY: open.consul
+open-consul: ## 在浏览器打开consul的ui界面，查看注册的服务
+	@open "http://localhost:8500/ui/"
