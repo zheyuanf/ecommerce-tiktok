@@ -11,6 +11,7 @@ service AuthService {
 
 message DeliverTokenReq {
     int32  user_id= 1;
+    int64  expire_at = 2;
 }
 
 message VerifyTokenReq {
@@ -23,4 +24,5 @@ message DeliveryResp {
 
 message VerifyResp {
     bool res = 1;
+    int32 user_id = 2;
 }

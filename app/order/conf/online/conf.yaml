@@ -1,6 +1,6 @@
 kitex:
   service: "order"
-  address: ":8887"
+  address: ":8886"
   log_level: info
   log_file_name: "log/kitex.log"
   log_max_size: 10

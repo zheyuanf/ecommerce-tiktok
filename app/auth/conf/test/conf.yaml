@@ -9,7 +9,7 @@ kitex:
 
 registry:
   registry_address:
-    - 127.0.0.1:2379
+    - 127.0.0.1:8500
   username: ""
   password: ""
 
@@ -21,3 +21,6 @@ redis:
   username: ""
   password: ""
   db: 0
+
+authenticator:
+  sign_key: "ecommerce_sign_key"
