@@ -38,6 +38,15 @@ func kitexInit() (opts []server.Option) {
 		ServiceName: conf.GetConf().Kitex.Service,
 	}))
 
+	//// registry consul service
+	//r, err := consul.NewConsulRegistry(conf.GetConf().Registry.RegistryAddress)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//opts = append(opts, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
+	//	ServiceName: conf.GetConf().Kitex.Service,
+	//}), server.WithRegistry(r))
+
 	// klog
 	logger := kitexlogrus.NewLogger()
 	klog.SetLogger(logger)

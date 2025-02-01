@@ -2,14 +2,12 @@ module github.com/zheyuanf/ecommerce-tiktok/app/cart
 
 go 1.23.3
 
-replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
-
 require (
 	github.com/cloudwego/kitex v0.12.1
 	github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20241120035129-55da83caab1b
 	github.com/kr/pretty v0.3.1
 	github.com/redis/go-redis/v9 v9.7.0
-	github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250126045713-01a95d5792bc
+	github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250130074053-8131af011b64
 	go.uber.org/zap v1.27.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/validator.v2 v2.0.1
