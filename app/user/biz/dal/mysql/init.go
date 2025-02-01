@@ -28,7 +28,9 @@ func Init() {
 		panic(err)
 	}
 	// 创建表结构
-	err = DB.AutoMigrate(&model.User{})
+	if os.Getenv("GO_ENV") != "online" {
+		err = DB.AutoMigrate(&model.User{})
+	}
 	if err != nil {
 		panic(err)
 	}
