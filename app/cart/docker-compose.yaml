@@ -5,10 +5,10 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_DATABASE=gorm
+      - MYSQL_DATABASE=cart
       - MYSQL_USER=gorm
       - MYSQL_PASSWORD=gorm
-      - MYSQL_RANDOM_ROOT_PASSWORD="yes"
+      - MYSQL_ROOT_PASSWORD=root
   redis:
     image: 'redis:latest'
     ports:

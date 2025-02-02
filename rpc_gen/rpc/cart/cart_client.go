@@ -4,9 +4,9 @@ import (
 	"context"
 	cart "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/cart"
 
-	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/cart/cartservice"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
+	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/cart/cartservice"
 )
 
 type RPCClient interface {
