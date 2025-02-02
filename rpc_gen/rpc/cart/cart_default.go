@@ -2,9 +2,9 @@ package cart
 
 import (
 	"context"
-	cart "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/cart"
 	"github.com/cloudwego/kitex/client/callopt"
 	"github.com/cloudwego/kitex/pkg/klog"
+	cart "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/cart"
 )
 
 func AddItem(ctx context.Context, req *cart.AddItemReq, callOptions ...callopt.Option) (resp *cart.AddItemResp, err error) {

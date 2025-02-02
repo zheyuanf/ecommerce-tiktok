@@ -9,7 +9,7 @@ require (
 	github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20241120035129-55da83caab1b
 	github.com/kr/pretty v0.3.1
 	github.com/redis/go-redis/v9 v9.7.0
-	github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250126045713-01a95d5792bc
+	github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250126040156-ef811195cfb6
 	go.uber.org/zap v1.27.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/validator.v2 v2.0.1

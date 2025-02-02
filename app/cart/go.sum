@@ -159,8 +159,8 @@ github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9de
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
-github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250126045713-01a95d5792bc h1:eo2Eggk3VMlhJNmtgmRBmvCFZcIt3Ax/Kisy2EXeE8w=
-github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250126045713-01a95d5792bc/go.mod h1:gu96a9O4IvQxX+R+tYm0qFIpQt43s0KAO4qZ9wHEJT4=
+github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250130074053-8131af011b64 h1:SUXtrstLCT8n1Q8QLgWebiYhSIACv2ZyMpszxnuC0Zc=
+github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250130074053-8131af011b64/go.mod h1:gu96a9O4IvQxX+R+tYm0qFIpQt43s0KAO4qZ9wHEJT4=
 go.opentelemetry.io/otel v1.25.0 h1:gldB5FfhRl7OJQbUHt/8s0a7cE8fbsPAtdpRaApKy4k=
 go.opentelemetry.io/otel v1.25.0/go.mod h1:Wa2ds5NOXEMkCmUou1WA7ZBfLTHWIsp034OVD7AO+Vg=
 go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.16.0 h1:+XWJd3jf75RXJq29mxbuXhCXFDG3S3R4vBUeSI2P7tE=
