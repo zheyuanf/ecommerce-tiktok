@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
+	"github.com/zheyuanf/ecommerce-tiktok/app/cart/biz/dal"
 	"net"
 	"time"
 
@@ -14,12 +16,23 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+var serviceName = conf.GetConf().Kitex.Service
+
 func main() {
+	// 加载 .env 文件中的环境变量
+	err := godotenv.Load()
+	if err != nil {
+		klog.Error(err.Error())
+	}
+
+	// 初始化数据库连接
+	dal.Init()
+
 	opts := kitexInit()
 
 	svr := cartservice.NewServer(new(CartServiceImpl), opts...)
 
-	err := svr.Run()
+	err = svr.Run()
 	if err != nil {
 		klog.Error(err.Error())
 	}
@@ -35,17 +48,8 @@ func kitexInit() (opts []server.Option) {
 
 	// service info
 	opts = append(opts, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
-		ServiceName: conf.GetConf().Kitex.Service,
+		ServiceName: serviceName,
 	}))
-
-	//// registry consul service
-	//r, err := consul.NewConsulRegistry(conf.GetConf().Registry.RegistryAddress)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//opts = append(opts, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
-	//	ServiceName: conf.GetConf().Kitex.Service,
-	//}), server.WithRegistry(r))
 
 	// klog
 	logger := kitexlogrus.NewLogger()
