@@ -3,10 +3,10 @@ package rpc
 import (
 	"sync"
 
-	"github.com/cloudwego/biz-demo/gomall/common/clientsuite"
 	"github.com/cloudwego/kitex/client"
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/conf"
 	checkoututils "github.com/zheyuanf/ecommerce-tiktok/app/checkout/utils"
+	"github.com/zheyuanf/ecommerce-tiktok/common/clientsuite"
 
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/cart/cartservice"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/order/orderservice"
