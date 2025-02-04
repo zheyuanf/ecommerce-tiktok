@@ -21,6 +21,10 @@ gen-client: ## gen client code of {svc}. example: make gen-client svc=product
 gen-server: ## gen service code of {svc}. example: make gen-server svc=product
 	@cd app/${svc} && cwgo server --type RPC --service ${svc} --module github.com/zheyuanf/ecommerce-tiktok/app/${svc} --pass "-use github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen"  -I ../../idl  --idl ../../idl/${svc}.proto
 
+.PHONY: gen-frontend
+gen-frontend:
+	@cd app/frontend && cwgo server -I ../../idl --type HTTP --service frontend --module github.com/zheyuanf/ecommerce-tiktok/app/frontend --idl ../../idl/frontend/${svc}.proto
+
 .PHONY: tidy
 tidy: ## run `go mod tidy` for all go module
 	@scripts/tidy.sh
