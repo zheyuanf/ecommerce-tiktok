@@ -8,12 +8,16 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/google/uuid"
+	"github.com/nats-io/nats.go"
+	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/infra/mq"
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/infra/rpc"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/cart"
 	checkout "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/checkout"
+	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/email"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/order"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/payment"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product"
+	"google.golang.org/protobuf/proto"
 )
 
 type CheckoutService struct {
@@ -116,7 +120,18 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	}
 	klog.Info(payResult)
 
-	// 5. 付款成功，修改订单状态
+	// 5. 邮件通知用户，向mq生产消息
+	data, _ := proto.Marshal(&email.EmailReq{
+		From:        "from@example.com",
+		To:          req.Email,
+		ContentType: "text/plain",
+		Subject:     "You just created an order in Ecommerce shop",
+		Content:     "You just created an order in Ecommerce shop",
+	})
+	msg := &nats.Msg{Subject: "email", Data: data}
+	_ = mq.Nc.PublishMsg(msg)
+
+	// 6. 付款成功，修改订单状态
 	_, err = rpc.OrderClient.MarkOrderPaid(s.ctx, &order.MarkOrderPaidReq{UserId: req.UserId, OrderId: orderId})
 	if err != nil {
 		klog.Error(err)
