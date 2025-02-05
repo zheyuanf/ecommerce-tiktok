@@ -21,12 +21,10 @@ func OrderList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &common.Empty{}
-	resp, err = service.NewOrderListService(ctx, c).Run(&req)
+	resp, err := service.NewOrderListService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
-
-	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+	c.HTML(consts.StatusOK, "order", utils.WarpResponse(ctx, c, resp))
 }

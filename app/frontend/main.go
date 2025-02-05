@@ -4,6 +4,7 @@ package main
 
 import (
 	"context"
+	"os"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -17,17 +18,30 @@ import (
 	"github.com/hertz-contrib/logger/accesslog"
 	hertzlogrus "github.com/hertz-contrib/logger/logrus"
 	"github.com/hertz-contrib/pprof"
+	"github.com/hertz-contrib/sessions"
+	"github.com/hertz-contrib/sessions/redis"
+	"github.com/joho/godotenv"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/biz/router"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/conf"
+	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/infra/rpc"
+	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/middleware"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 func main() {
-	// init dal
-	// dal.Init()
+	// 读取.env文件中的环境变量
+	_ = godotenv.Load()
+
+	// init rpc client
+	rpc.InitClient()
+
 	address := conf.GetConf().Hertz.Address
 	h := server.New(server.WithHostPorts(address))
+
+	// 加载模板文件
+	h.LoadHTMLGlob("template/*")
+	h.Delims("{{", "}}")
 
 	registerMiddleware(h)
 
@@ -38,10 +52,50 @@ func main() {
 
 	router.GeneratedRegister(h)
 
+	h.GET("sign-in", func(ctx context.Context, c *app.RequestContext) {
+		c.HTML(consts.StatusOK, "sign-in", utils.H{
+			"title": "Sign in",
+			"next":  c.Query("next"),
+		})
+	})
+	h.GET("sign-up", func(ctx context.Context, c *app.RequestContext) {
+		c.HTML(consts.StatusOK, "sign-up", utils.H{
+			"title": "Sign up",
+		})
+	})
+	h.GET("/redirect", func(ctx context.Context, c *app.RequestContext) {
+		c.HTML(consts.StatusOK, "about", utils.H{
+			"title": "Error",
+		})
+	})
+
+	// 当环境变量不是online时，屏蔽爬虫
+	if os.Getenv("GO_ENV") != "online" {
+		h.GET("/robots.txt", func(ctx context.Context, c *app.RequestContext) {
+			c.Data(consts.StatusOK, "text/plain", []byte(`User-agent: *
+Disallow: /`))
+		})
+	}
+
+	// 静态文件服务
+	h.Static("/static", "./")
+
 	h.Spin()
 }
 
 func registerMiddleware(h *server.Hertz) {
+	// redis
+	store, err := redis.NewStore(100, "tcp", conf.GetConf().Redis.Address, "", []byte(os.Getenv("SESSION_SECRET")))
+	if err != nil {
+		panic(err)
+	}
+	store.Options(sessions.Options{MaxAge: 86400, Path: "/"})
+	rs, err := redis.GetRedisStore(store)
+	if err == nil {
+		rs.SetSerializer(sessions.JSONSerializer{})
+	}
+	h.Use(sessions.New("cloudwego-shop", store))
+
 	// log
 	logger := hertzlogrus.NewLogger()
 	hlog.SetLogger(logger)
@@ -80,4 +134,7 @@ func registerMiddleware(h *server.Hertz) {
 
 	// cores
 	h.Use(cors.Default())
+
+	// 注册全局中间件
+	middleware.RegisterMiddleware(h)
 }

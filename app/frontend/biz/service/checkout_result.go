@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 	common "github.com/zheyuanf/ecommerce-tiktok/app/frontend/hertz_gen/frontend/common"
 )
 
@@ -16,11 +17,6 @@ func NewCheckoutResultService(Context context.Context, RequestContext *app.Reque
 	return &CheckoutResultService{RequestContext: RequestContext, Context: Context}
 }
 
-func (h *CheckoutResultService) Run(req *common.Empty) (resp *common.Empty, err error) {
-	//defer func() {
-	// hlog.CtxInfof(h.Context, "req = %+v", req)
-	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	//}()
-	// todo edit your code
-	return
+func (h *CheckoutResultService) Run(req *common.Empty) (resp map[string]any, err error) {
+	return utils.H{}, nil
 }

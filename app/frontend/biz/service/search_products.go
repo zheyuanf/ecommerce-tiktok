@@ -8,16 +8,16 @@ import (
 	product "github.com/zheyuanf/ecommerce-tiktok/app/frontend/hertz_gen/frontend/product"
 )
 
-type SearchProducsService struct {
+type SearchProductsService struct {
 	RequestContext *app.RequestContext
 	Context        context.Context
 }
 
-func NewSearchProducsService(Context context.Context, RequestContext *app.RequestContext) *SearchProducsService {
-	return &SearchProducsService{RequestContext: RequestContext, Context: Context}
+func NewSearchProductsService(Context context.Context, RequestContext *app.RequestContext) *SearchProductsService {
+	return &SearchProductsService{RequestContext: RequestContext, Context: Context}
 }
 
-func (h *SearchProducsService) Run(req *product.SearchProductsReq) (resp *common.Empty, err error) {
+func (h *SearchProductsService) Run(req *product.SearchProductsReq) (resp *common.Empty, err error) {
 	//defer func() {
 	// hlog.CtxInfof(h.Context, "req = %+v", req)
 	// hlog.CtxInfof(h.Context, "resp = %+v", resp)

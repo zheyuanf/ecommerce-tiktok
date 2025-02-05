@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 	common "github.com/zheyuanf/ecommerce-tiktok/app/frontend/hertz_gen/frontend/common"
 )
 
@@ -16,11 +17,8 @@ func NewAboutService(Context context.Context, RequestContext *app.RequestContext
 	return &AboutService{RequestContext: RequestContext, Context: Context}
 }
 
-func (h *AboutService) Run(req *common.Empty) (resp *common.Empty, err error) {
-	//defer func() {
-	// hlog.CtxInfof(h.Context, "req = %+v", req)
-	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	//}()
-	// todo edit your code
-	return
+func (h *AboutService) Run(req *common.Empty) (resp map[string]any, err error) {
+	return utils.H{
+		"title": "About",
+	}, nil
 }
