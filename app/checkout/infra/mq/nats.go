@@ -2,7 +2,7 @@ package mq
 
 import (
 	"github.com/nats-io/nats.go"
-	"github.com/zheyuanf/ecommerce-tiktok/app/email/conf"
+	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/conf"
 )
 
 var (
