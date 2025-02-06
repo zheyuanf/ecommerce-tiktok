@@ -12,7 +12,6 @@ require (
 	github.com/kr/pretty v0.3.1
 	github.com/nats-io/nats.go v1.38.0
 	github.com/redis/go-redis/v9 v9.7.0
-	github.com/zheyuanf/ecommerce-tiktok/app/email v0.0.0-20250204145217-4443579da783
 	github.com/zheyuanf/ecommerce-tiktok/common v0.0.0-20250204145217-4443579da783
 	github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250204022058-4a76f315c789
 	go.uber.org/zap v1.27.0
