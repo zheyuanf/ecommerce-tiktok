@@ -7,6 +7,12 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - ./db/sql/ini:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
   redis:
     image: 'redis:latest'
     ports:
@@ -22,3 +28,84 @@ services:
     ports:
       - "4222:4222"
       - "8222:8222"
+  user:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc
+      args:
+        - SVC=user
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/user/conf/dev:/opt/ecommerce-tiktok/user/conf/dev
+  order:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc
+      args:
+        - SVC=order
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/order/conf/dev:/opt/ecommerce-tiktok/order/conf/dev
+  email:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc
+      args:
+        - SVC=email
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/email/conf/dev:/opt/ecommerce-tiktok/email/conf/dev
+  payment:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc
+      args:
+        - SVC=payment
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/payment/conf/dev:/opt/ecommerce-tiktok/payment/conf/dev
+

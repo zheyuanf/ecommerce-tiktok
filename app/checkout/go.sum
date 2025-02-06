@@ -310,6 +310,10 @@ github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
+github.com/zheyuanf/ecommerce-tiktok/app/email v0.0.0-20250204145217-4443579da783 h1:FRKLQ5ar9Liv4nHlcn252TGTkrFywEKuwoNY85xgMLo=
+github.com/zheyuanf/ecommerce-tiktok/app/email v0.0.0-20250204145217-4443579da783/go.mod h1:Wc1hkUVzOEdsKL+wHQgtm2iUawWjnNTQnV4YzlcmcMU=
+github.com/zheyuanf/ecommerce-tiktok/common v0.0.0-20250204145217-4443579da783 h1:Mf1TZCL0CPCOf07xioJYMlI7Ll4mkhuaH3usYhddUiU=
+github.com/zheyuanf/ecommerce-tiktok/common v0.0.0-20250204145217-4443579da783/go.mod h1:xzwQ+sA9ZiRuKLqb5i1KixWxWYkkBKKtE4bSKr+wQaI=
 github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250204022058-4a76f315c789 h1:uNhyHicPgxJQ+/vIhoJSHP3w7wg1Pq9JJHIlFBBiucM=
 github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250204022058-4a76f315c789/go.mod h1:0/4FZFx8wDG5f5xvZ9qZSGu4sRNJyq9vWXEsaWCuAB4=
 go.opentelemetry.io/otel v1.25.0 h1:gldB5FfhRl7OJQbUHt/8s0a7cE8fbsPAtdpRaApKy4k=

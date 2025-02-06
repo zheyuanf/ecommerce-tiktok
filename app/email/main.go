@@ -11,12 +11,16 @@ import (
 	"github.com/zheyuanf/ecommerce-tiktok/app/email/conf"
 	"github.com/zheyuanf/ecommerce-tiktok/app/email/consumer"
 	"github.com/zheyuanf/ecommerce-tiktok/app/email/infra/mq"
+	"github.com/zheyuanf/ecommerce-tiktok/common/serversuite"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/email/emailservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+var serviceName = conf.GetConf().Kitex.Service
+
 func main() {
+	// 初始化 MQ 和 Consumer
 	mq.Init()
 	consumer.Init()
 	opts := kitexInit()
@@ -39,8 +43,11 @@ func kitexInit() (opts []server.Option) {
 
 	// service info
 	opts = append(opts, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
-		ServiceName: conf.GetConf().Kitex.Service,
+		ServiceName: serviceName,
 	}))
+
+	// 设置server的服务注册等配置
+	opts = append(opts, server.WithSuite(serversuite.CommonServerSuite{CurrentServiceName: serviceName, RegistryAddr: conf.GetConf().Registry.RegistryAddress[0]}))
 
 	// klog
 	logger := kitexlogrus.NewLogger()

@@ -1,0 +1,29 @@
+FROM golang:1.23 AS builder
+
+ARG SVC
+
+WORKDIR /usr/src/ecommerce-tiktok
+
+ENV GOPROXY=https://goproxy.io,direct
+
+COPY app/frontend/go.mod app/frontend/go.sum ./app/frontend/
+
+RUN cd app/frontend/ go mod download && go mod verify
+
+COPY app/frontend app/frontend
+
+RUN cd app/frontend/ && CGO_ENABLED=0 go build -v -o /opt/ecommerce-tiktok/frontend/server
+
+FROM busybox
+
+COPY --from=builder /opt/ecommerce-tiktok/frontend/server /opt/ecommerce-tiktok/frontend/server
+
+COPY app/frontend/conf /opt/ecommerce-tiktok/frontend/conf
+COPY app/frontend/.env /opt/ecommerce-tiktok/frontend/.env
+
+WORKDIR /opt/ecommerce-tiktok/frontend/
+
+ENV GO_ENV=dev
+ENV MYSQL_HOST=mysql
+
+CMD ["./server"]

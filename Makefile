@@ -44,3 +44,13 @@ clean: ## clern up all the tmp files
 .PHONY: open.consul
 open-consul: ## 在浏览器打开consul的ui界面，查看注册的服务
 	@open "http://localhost:8500/ui/"
+
+##@ 构建docker镜像
+
+.PHONY: build-frontend
+build-frontend:
+	docker build -f ./deploy/Dockerfile.frontend -t ecommerce-frontend:${v} .
+
+.PHONY: build-svc
+build-svc:
+	docker build -f ./deploy/Dockerfile.svc -t ecommerce-${svc}:${v} --build-arg SVC=${svc} .
