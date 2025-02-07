@@ -8,7 +8,6 @@ import (
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/biz/service"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/biz/utils"
 	category "github.com/zheyuanf/ecommerce-tiktok/app/frontend/hertz_gen/frontend/category"
-	common "github.com/zheyuanf/ecommerce-tiktok/app/frontend/hertz_gen/frontend/common"
 )
 
 // Category .
@@ -22,12 +21,11 @@ func Category(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &common.Empty{}
-	resp, err = service.NewCategoryService(ctx, c).Run(&req)
+	resp, err := service.NewCategoryService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
 
-	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+	c.HTML(consts.StatusOK, "category", resp)
 }

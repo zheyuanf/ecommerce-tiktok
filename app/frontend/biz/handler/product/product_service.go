@@ -7,7 +7,6 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/biz/service"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/biz/utils"
-	common "github.com/zheyuanf/ecommerce-tiktok/app/frontend/hertz_gen/frontend/common"
 	product "github.com/zheyuanf/ecommerce-tiktok/app/frontend/hertz_gen/frontend/product"
 )
 
@@ -22,14 +21,13 @@ func GetProduct(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &common.Empty{}
-	resp, err = service.NewGetProductService(ctx, c).Run(&req)
+	resp, err := service.NewGetProductService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
 
-	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+	c.HTML(consts.StatusOK, "product", utils.WarpResponse(ctx, c, resp))
 }
 
 // SearchProducts .
@@ -44,10 +42,9 @@ func SearchProducts(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp, err := service.NewSearchProductsService(ctx, c).Run(&req)
-
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
-	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+	c.HTML(consts.StatusOK, "search", utils.WarpResponse(ctx, c, resp))
 }
