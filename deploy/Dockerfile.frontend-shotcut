@@ -1,0 +1,12 @@
+FROM busybox
+
+COPY app/frontend/server /opt/ecommerce-tiktok/frontend/server
+
+COPY app/frontend/conf /opt/ecommerce-tiktok/frontend/conf
+COPY app/frontend/.env /opt/ecommerce-tiktok/frontend/.env
+COPY app/frontend/template /opt/ecommerce-tiktok/frontend/template
+COPY app/frontend/static /opt/ecommerce-tiktok/frontend/static
+
+WORKDIR /opt/ecommerce-tiktok/frontend/
+
+CMD ["./server"]

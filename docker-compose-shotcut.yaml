@@ -1,0 +1,187 @@
+services:
+  mysql:
+    image: 'mysql:latest'
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./db/sql/ini:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+  redis:
+    image: 'redis:latest'
+    ports:
+      - 6379:6379
+  consul:
+    image: "hashicorp/consul:latest"
+    ports:
+      - "8500:8500"
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+  frontend:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.frontend-shotcut
+    ports:
+      - 8080:8080
+    environment:
+      - GO_ENV=dev
+      - SESSION_SECRET=sdf23joi1
+    depends_on:
+      consul:
+        condition: service_started
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/frontend/conf/dev:/opt/ecommerce-tiktok/frontend/conf/dev
+  user:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc-shotcut
+      args:
+        - SVC=user
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/user/conf/dev:/opt/ecommerce-tiktok/user/conf/dev
+  order:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc-shotcut
+      args:
+        - SVC=order
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/order/conf/dev:/opt/ecommerce-tiktok/order/conf/dev
+  email:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc-shotcut
+      args:
+        - SVC=email
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/email/conf/dev:/opt/ecommerce-tiktok/email/conf/dev
+  payment:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc-shotcut
+      args:
+        - SVC=payment
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/payment/conf/dev:/opt/ecommerce-tiktok/payment/conf/dev
+  product:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc-shotcut
+      args:
+        - SVC=product
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/product/conf/dev:/opt/ecommerce-tiktok/product/conf/dev
+  checkout:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc-shotcut
+      args:
+        - SVC=checkout
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/checkout/conf/dev:/opt/ecommerce-tiktok/checkout/conf/dev
+  cart:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc-shotcut
+      args:
+        - SVC=cart
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/cart/conf/dev:/opt/ecommerce-tiktok/cart/conf/dev
+
