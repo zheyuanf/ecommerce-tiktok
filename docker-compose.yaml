@@ -28,6 +28,22 @@ services:
     ports:
       - "4222:4222"
       - "8222:8222"
+  frontend:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.frontend
+    ports:
+      - 8080:8080
+    environment:
+      - GO_ENV=dev
+      - SESSION_SECRET=sdf23joi1
+    depends_on:
+      consul:
+        condition: service_started
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/frontend/conf/dev:/opt/ecommerce-tiktok/frontend/conf/dev
   user:
     build:
       context: .
