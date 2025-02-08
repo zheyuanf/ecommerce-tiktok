@@ -12,7 +12,7 @@ import (
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/biz/dal"
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/conf"
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/infra/mq"
-	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/infra/rpc"
+	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/infra/rpc"
 	"github.com/zheyuanf/ecommerce-tiktok/common/serversuite"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/checkout/checkoutservice"
 	"go.uber.org/zap/zapcore"

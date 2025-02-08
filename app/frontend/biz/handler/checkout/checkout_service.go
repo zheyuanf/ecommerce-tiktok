@@ -41,7 +41,6 @@ func CheckoutWaiting(ctx context.Context, c *app.RequestContext) {
 		c.HTML(consts.StatusOK, "waiting", utils.WarpResponse(ctx, c, hertzUtils.H{"warning": err}))
 		return
 	}
-
 	resp, err := service.NewCheckoutWaitingService(ctx, c).Run(&req)
 	if err != nil {
 		c.HTML(consts.StatusOK, "waiting", utils.WarpResponse(ctx, c, hertzUtils.H{"error": err}))

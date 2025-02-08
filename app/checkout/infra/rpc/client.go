@@ -27,7 +27,7 @@ var (
 )
 
 // 初始化需要服务client
-func InitialClient() {
+func InitClient() {
 	once.Do(func() {
 		registryAddr = conf.GetConf().Registry.RegistryAddress[0]
 		serviceName = conf.GetConf().Kitex.Service
