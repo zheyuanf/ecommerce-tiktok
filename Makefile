@@ -35,6 +35,10 @@ tidy: ## run `go mod tidy` for all go module
 env-start:  ## launch all middleware software as the docker
 	@docker-compose up -d
 
+.PHONY: env-start-shotcut
+env-start-shotcut:  ## launch all middleware software as the docker
+	@bash scripts/build.sh && docker-compose -f docker-compose-shotcut.yaml up -d 
+
 .PHONY: env-stop
 env-stop: ## stop all docker
 	@docker-compose down
