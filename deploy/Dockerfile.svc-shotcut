@@ -1,0 +1,15 @@
+FROM busybox
+
+ARG SVC
+
+COPY bin/${SVC}/server /opt/ecommerce-tiktok/${SVC}/server
+
+COPY app/${SVC}/conf /opt/ecommerce-tiktok/${SVC}/conf
+COPY app/${SVC}/.env /opt/ecommerce-tiktok/${SVC}/.env
+
+WORKDIR /opt/ecommerce-tiktok/${SVC}/
+
+ENV GO_ENV=dev
+ENV MYSQL_HOST=mysql
+
+CMD ["./server"]
