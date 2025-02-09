@@ -1,6 +1,6 @@
 FROM busybox
 
-COPY app/frontend/server /opt/ecommerce-tiktok/frontend/server
+COPY bin/frontend/server /opt/ecommerce-tiktok/frontend/server
 
 COPY app/frontend/conf /opt/ecommerce-tiktok/frontend/conf
 COPY app/frontend/.env /opt/ecommerce-tiktok/frontend/.env

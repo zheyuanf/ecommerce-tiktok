@@ -8,7 +8,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	credit_card "github.com/durango/go-credit-card"
 	"github.com/google/uuid"
-	"github.com/zheyuanf/ecommerce-tiktok/app/order/biz/dal/mysql"
+	"github.com/zheyuanf/ecommerce-tiktok/app/payment/biz/dal/mysql"
 	"github.com/zheyuanf/ecommerce-tiktok/app/payment/biz/model"
 	payment "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/payment"
 )

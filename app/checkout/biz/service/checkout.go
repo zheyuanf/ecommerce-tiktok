@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/google/uuid"
 	"github.com/nats-io/nats.go"
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/infra/mq"
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/infra/rpc"
@@ -99,9 +98,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	klog.Info(emptyResult)
 
 	// 4. 付款
-	var orderId string
-	u, _ := uuid.NewRandom()
-	orderId = u.String()
+	orderId := orderResult.Order.OrderId
 	payReq := &payment.ChargeReq{
 		UserId:  req.UserId,
 		OrderId: orderId,

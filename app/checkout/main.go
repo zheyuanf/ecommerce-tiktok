@@ -11,6 +11,8 @@ import (
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/biz/dal"
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/conf"
+	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/infra/mq"
+	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/infra/rpc"
 	"github.com/zheyuanf/ecommerce-tiktok/common/serversuite"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/checkout/checkoutservice"
 	"go.uber.org/zap/zapcore"
@@ -28,6 +30,10 @@ func main() {
 
 	// 初始化数据库连接
 	dal.Init()
+	// 初始化 rpc 客户端连接
+	rpc.InitClient()
+	// 初始化消息队列连接
+	mq.Init()
 
 	opts := kitexInit()
 
