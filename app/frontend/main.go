@@ -18,8 +18,6 @@ import (
 	"github.com/hertz-contrib/logger/accesslog"
 	hertzlogrus "github.com/hertz-contrib/logger/logrus"
 	"github.com/hertz-contrib/pprof"
-	"github.com/hertz-contrib/sessions"
-	"github.com/hertz-contrib/sessions/redis"
 	"github.com/joho/godotenv"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/biz/router"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/conf"
@@ -84,18 +82,6 @@ Disallow: /`))
 }
 
 func registerMiddleware(h *server.Hertz) {
-	// redis
-	store, err := redis.NewStore(100, "tcp", conf.GetConf().Redis.Address, "", []byte(os.Getenv("SESSION_SECRET")))
-	if err != nil {
-		panic(err)
-	}
-	store.Options(sessions.Options{MaxAge: 86400, Path: "/"})
-	rs, err := redis.GetRedisStore(store)
-	if err == nil {
-		rs.SetSerializer(sessions.JSONSerializer{})
-	}
-	h.Use(sessions.New("ecommerce-tiktok", store))
-
 	// log
 	logger := hertzlogrus.NewLogger()
 	hlog.SetLogger(logger)

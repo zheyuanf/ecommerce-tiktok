@@ -3,7 +3,6 @@ package middleware
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/sessions"
@@ -73,7 +72,7 @@ func Auth() app.HandlerFunc {
 func JWTAuth() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		// 从请求中获取 token
-		token := strings.TrimPrefix(string(c.GetHeader("Authorization")), "Bearer ")
+		token := string(c.Cookie("token"))
 		req := &auth.VerifyTokenReq{
 			Token: token,
 		}
