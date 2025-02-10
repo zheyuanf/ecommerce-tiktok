@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"github.com/zheyuanf/ecommerce-tiktok/app/email/conf"
-
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
