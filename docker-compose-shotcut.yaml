@@ -184,4 +184,24 @@ services:
         condition: service_started
     volumes:
       - ./app/cart/conf/dev:/opt/ecommerce-tiktok/cart/conf/dev
+  auth:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc-shotcut
+      args:
+        - SVC=auth
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./app/auth/conf/dev:/opt/ecommerce-tiktok/auth/conf/dev
 

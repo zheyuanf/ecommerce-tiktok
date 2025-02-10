@@ -94,7 +94,7 @@ func registerMiddleware(h *server.Hertz) {
 	if err == nil {
 		rs.SetSerializer(sessions.JSONSerializer{})
 	}
-	h.Use(sessions.New("cloudwego-shop", store))
+	h.Use(sessions.New("ecommerce-tiktok", store))
 
 	// log
 	logger := hertzlogrus.NewLogger()
@@ -136,5 +136,5 @@ func registerMiddleware(h *server.Hertz) {
 	h.Use(cors.Default())
 
 	// 注册全局中间件
-	middleware.RegisterMiddleware(h)
+	middleware.RegisterJWTMiddleware(h)
 }

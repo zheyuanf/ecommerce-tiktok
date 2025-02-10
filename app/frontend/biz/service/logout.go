@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/hertz-contrib/sessions"
+	"github.com/cloudwego/hertz/pkg/protocol"
 	common "github.com/zheyuanf/ecommerce-tiktok/app/frontend/hertz_gen/frontend/common"
 )
 
@@ -18,10 +18,7 @@ func NewLogoutService(Context context.Context, RequestContext *app.RequestContex
 }
 
 func (h *LogoutService) Run(req *common.Empty) (resp *common.Empty, err error) {
-	// 清除session
-	session := sessions.Default(h.RequestContext)
-	session.Clear()
-	session.Save() //nolint:errcheck
+	// 删除cookie
+	h.RequestContext.SetCookie("token", "", 0, "/", "", protocol.CookieSameSiteNoneMode, true, true)
 	return
-
 }
