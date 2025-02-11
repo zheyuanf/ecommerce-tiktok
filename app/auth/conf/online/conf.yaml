@@ -21,3 +21,6 @@ redis:
   username: ""
   password: ""
   db: 0
+
+authenticator:
+  sign_key: "ecommerce_sign_key"

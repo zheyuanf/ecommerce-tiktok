@@ -7,6 +7,7 @@ import (
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/conf"
 	frontendutils "github.com/zheyuanf/ecommerce-tiktok/app/frontend/utils"
 	"github.com/zheyuanf/ecommerce-tiktok/common/clientsuite"
+	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/auth/authservice"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/cart/cartservice"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/checkout/checkoutservice"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/order/orderservice"
@@ -20,6 +21,7 @@ var (
 	CartClient     cartservice.Client
 	CheckoutClient checkoutservice.Client
 	OrderClient    orderservice.Client
+	AuthClient     authservice.Client
 	once           sync.Once
 	err            error
 	registryAddr   string
@@ -38,6 +40,7 @@ func InitClient() {
 		initCartClient()
 		initCheckoutClient()
 		initOrderClient()
+		initAuthClient()
 	})
 }
 
@@ -64,5 +67,10 @@ func initCheckoutClient() {
 
 func initOrderClient() {
 	OrderClient, err = orderservice.NewClient("order", commonSuite)
+	frontendutils.MustHandleError(err)
+}
+
+func initAuthClient() {
+	AuthClient, err = authservice.NewClient("auth", commonSuite)
 	frontendutils.MustHandleError(err)
 }
