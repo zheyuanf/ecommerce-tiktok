@@ -27,6 +27,9 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 	if req.Password != req.ConfirmPassword {
 		return nil, errors.New("password and confirm password do not match")
 	}
+	if req.Role != model.RoleAdmin && req.Role != model.RoleUser {
+		return nil, errors.New("role must be user or admin")
+	}
 
 	// 2. 计算密码的hash值
 	passwordHashed, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
@@ -38,6 +41,7 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 	newUser := &model.User{
 		Email:          req.Email,
 		PasswordHashed: string(passwordHashed),
+		Role:           req.Role,
 	}
 	if err = model.Create(mysql.DB, s.ctx, newUser); err != nil {
 		return

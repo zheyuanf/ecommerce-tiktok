@@ -38,8 +38,9 @@ func GlobalJWTAuth() app.HandlerFunc {
 
 		// 验证 token 是否有效，无效则重定向到登录页面
 		if err == nil && resp.Res {
-			// 将 user_id 保存到 ctx 中，以便后续的 handler 可以使用
+			// 将 user_id 和 role 保存到 ctx 中，以便后续的 handler 可以使用
 			ctx = context.WithValue(ctx, utils.UserIdKey, resp.UserId)
+			ctx = context.WithValue(ctx, utils.UserRoleKey, resp.Role)
 		}
 		c.Next(ctx)
 	}
@@ -94,8 +95,9 @@ func JWTAuth() app.HandlerFunc {
 			c.Next(ctx)
 			return
 		}
-		// 将 user_id 保存到 ctx 中，以便后续的 handler 可以使用
+		// 将 user_id 和 role 保存到 ctx 中，以便后续的 handler 可以使用
 		ctx = context.WithValue(ctx, utils.UserIdKey, resp.UserId)
+		ctx = context.WithValue(ctx, utils.UserRoleKey, resp.Role)
 		c.Next(ctx)
 	}
 }

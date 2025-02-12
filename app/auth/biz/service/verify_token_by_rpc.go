@@ -22,6 +22,7 @@ func (s *VerifyTokenByRPCService) Run(req *auth.VerifyTokenReq) (resp *auth.Veri
 	if err == nil {
 		resp.Res = true
 		resp.UserId = claims.UserId
+		resp.Role = claims.Role
 	}
 	return resp, nil
 }

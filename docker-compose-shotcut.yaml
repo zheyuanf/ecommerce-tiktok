@@ -47,13 +47,14 @@ services:
     environment:
       - GO_ENV=dev
       - SESSION_SECRET=sdf23joi1
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_HOST=mysql
     depends_on:
       consul:
         condition: service_started
       redis:
         condition: service_started
-    volumes:
-      - ./app/frontend/conf/dev:/opt/ecommerce-tiktok/frontend/conf/dev
   user:
     build:
       context: .

@@ -6,10 +6,16 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	RoleAdmin = "admin"
+	RoleUser  = "user"
+)
+
 type User struct {
 	Base
 	Email          string `gorm:"unique"`
 	PasswordHashed string
+	Role           string
 }
 
 func (u User) TableName() string {

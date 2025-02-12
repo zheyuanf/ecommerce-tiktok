@@ -35,5 +35,8 @@ func (s *LoginService) Run(req *user.LoginReq) (resp *user.LoginResp, err error)
 	if err != nil {
 		return
 	}
-	return &user.LoginResp{UserId: int32(row.ID)}, nil
+	return &user.LoginResp{
+		UserId: int32(row.ID),
+		Role:   row.Role,
+	}, nil
 }

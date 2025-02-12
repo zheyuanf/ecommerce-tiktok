@@ -18,7 +18,8 @@ func InitAuthenticator(signKey string) {
 }
 
 type MyClaims struct {
-	UserId int32 `json:"user_id"`
+	UserId int32  `json:"user_id"`
+	Role   string `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -35,9 +36,10 @@ func NewJWTTokenAuthenticator(signkey string) *JWTTokenAuthenticator {
 	}
 }
 
-func (j *JWTTokenAuthenticator) GenerateToken(userId int32, expireAt time.Time) (string, error) {
+func (j *JWTTokenAuthenticator) GenerateToken(userId int32, role string, expireAt time.Time) (string, error) {
 	token := jwt.NewWithClaims(j.signMethod, MyClaims{
 		UserId: userId,
+		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expireAt),
 		},

@@ -13,6 +13,7 @@ message RegisterReq {
     string email = 1;
     string password = 2;
     string confirm_password = 3;
+    string role = 4;
 }
 
 message RegisterResp {
@@ -26,4 +27,5 @@ message LoginReq {
 
 message LoginResp {
     int32 user_id = 1;
+    string role = 2;
 }
