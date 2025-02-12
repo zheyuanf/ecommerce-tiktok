@@ -2,6 +2,10 @@ package model
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"github.com/redis/go-redis/v9"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -30,11 +34,77 @@ func (p ProductQuery) GetById(productId int) (product Product, err error) {
 	return
 }
 
-func SearchProduct(db *gorm.DB, ctx context.Context, q string) (product []*Product, err error) {
-	err = db.WithContext(ctx).Model(&Product{}).Find(&product, "name like ? or description like ?", "%"+q+"%", "%"+q+"%").Error
+func (p ProductQuery) SearchProduct(q string) (product []*Product, err error) {
+	err = p.db.WithContext(p.ctx).
+		Model(&Product{}).
+		Find(&product, "name like ? or description like ?", "%"+q+"%", "%"+q+"%").
+		Error
 	return product, err
 }
 
 func NewProductQuery(ctx context.Context, db *gorm.DB) ProductQuery {
 	return ProductQuery{ctx: ctx, db: db}
+}
+
+type CachedProductQuery struct {
+	productQuery ProductQuery
+	cacheClient  *redis.Client
+	prefix       string
+}
+
+func (c CachedProductQuery) GetById(productId int) (product Product, err error) {
+	// redis key
+	cachedKey := fmt.Sprintf("%s_%s_%d", c.prefix, "product_by_id", productId)
+	// search in redis
+	cachedResult := c.cacheClient.Get(c.productQuery.ctx, cachedKey)
+	// error chain
+	err = func() error {
+		if err := cachedResult.Err(); err != nil {
+			return err
+		}
+		cacheResultBytes, err := cachedResult.Bytes()
+		if err != nil {
+			return err
+		}
+		// redis中字符串转为product
+		err = json.Unmarshal(cacheResultBytes, &product)
+		if err != nil {
+			return err
+		}
+		return nil
+	}()
+
+	//从redis中读数据出错
+	if err != nil {
+		product, err = c.productQuery.GetById(productId)
+		if err != nil {
+			return Product{}, err
+		}
+		// 序列化为redis中存的字符串
+		encode, err := json.Marshal(product)
+		if err != nil {
+			return product, nil
+		}
+		// 存入redis， 过期时间1h
+		_ = c.cacheClient.Set(c.productQuery.ctx, cachedKey, encode, time.Hour)
+	}
+	return
+}
+
+func (c CachedProductQuery) SearchProduct(q string) (product []*Product, err error) {
+	return c.productQuery.SearchProduct(q)
+}
+
+func NewCachedProductQuery(ctx context.Context, db *gorm.DB, cacheClient *redis.Client) *CachedProductQuery {
+	return &CachedProductQuery{
+		productQuery: NewProductQuery(ctx, db),
+		cacheClient:  cacheClient,
+		prefix:       "shop",
+	}
+}
+
+// ProductMutation 数据库读写分离（暂时没用上）
+type ProductMutation struct {
+	ctx context.Context
+	db  *gorm.DB
 }

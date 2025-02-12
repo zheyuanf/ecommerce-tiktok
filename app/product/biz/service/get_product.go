@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/zheyuanf/ecommerce-tiktok/app/product/biz/dal/redis"
 
 	"github.com/zheyuanf/ecommerce-tiktok/app/product/biz/dal/mysql"
 	"github.com/zheyuanf/ecommerce-tiktok/app/product/biz/model"
@@ -22,7 +23,7 @@ func (s *GetProductService) Run(req *product.GetProductReq) (resp *product.GetPr
 	if req.Id == 0 {
 		return nil, errors.New("product id is empty")
 	}
-	productQuery := model.NewProductQuery(s.ctx, mysql.DB)
+	productQuery := model.NewCachedProductQuery(s.ctx, mysql.DB, redis.RedisClient)
 
 	p, err := productQuery.GetById(int(req.Id))
 	if err != nil {

@@ -8,6 +8,7 @@ service ProductCatalogService {
   rpc ListProducts(ListProductsReq) returns (ListProductsResp) {}
   rpc GetProduct(GetProductReq) returns (GetProductResp) {}
   rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {}
+  rpc ChangeStorage(stream ChangeStorageReq) returns (ChangeStorageResp) {}
 }
 
 message ListProductsReq{
@@ -23,6 +24,7 @@ message Product {
   string description = 3;
   string picture = 4;
   float price = 5;
+  int32 storage = 7;
 
   repeated string categories = 6;
 }
@@ -46,3 +48,10 @@ message SearchProductsReq {
 message SearchProductsResp {
   repeated Product results = 1;
 }
+
+message ChangeStorageReq {
+  uint32 id = 1;
+  int32  quantity = 2;
+}
+
+message ChangeStorageResp {}
