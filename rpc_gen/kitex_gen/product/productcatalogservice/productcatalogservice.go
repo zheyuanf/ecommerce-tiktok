@@ -36,6 +36,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"CheckStorage": kitex.NewMethodInfo(
+		checkStorageHandler,
+		newCheckStorageArgs,
+		newCheckStorageResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -561,6 +568,159 @@ func (p *SearchProductsResult) GetResult() interface{} {
 	return p.Success
 }
 
+func checkStorageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(product.CheckStorageReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(product.ProductCatalogService).CheckStorage(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CheckStorageArgs:
+		success, err := handler.(product.ProductCatalogService).CheckStorage(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CheckStorageResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newCheckStorageArgs() interface{} {
+	return &CheckStorageArgs{}
+}
+
+func newCheckStorageResult() interface{} {
+	return &CheckStorageResult{}
+}
+
+type CheckStorageArgs struct {
+	Req *product.CheckStorageReq
+}
+
+func (p *CheckStorageArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(product.CheckStorageReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *CheckStorageArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *CheckStorageArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *CheckStorageArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CheckStorageArgs) Unmarshal(in []byte) error {
+	msg := new(product.CheckStorageReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CheckStorageArgs_Req_DEFAULT *product.CheckStorageReq
+
+func (p *CheckStorageArgs) GetReq() *product.CheckStorageReq {
+	if !p.IsSetReq() {
+		return CheckStorageArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CheckStorageArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CheckStorageArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CheckStorageResult struct {
+	Success *product.CheckStorageResp
+}
+
+var CheckStorageResult_Success_DEFAULT *product.CheckStorageResp
+
+func (p *CheckStorageResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(product.CheckStorageResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *CheckStorageResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *CheckStorageResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *CheckStorageResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CheckStorageResult) Unmarshal(in []byte) error {
+	msg := new(product.CheckStorageResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckStorageResult) GetSuccess() *product.CheckStorageResp {
+	if !p.IsSetSuccess() {
+		return CheckStorageResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CheckStorageResult) SetSuccess(x interface{}) {
+	p.Success = x.(*product.CheckStorageResp)
+}
+
+func (p *CheckStorageResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CheckStorageResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -596,6 +756,16 @@ func (p *kClient) SearchProducts(ctx context.Context, Req *product.SearchProduct
 	_args.Req = Req
 	var _result SearchProductsResult
 	if err = p.c.Call(ctx, "SearchProducts", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CheckStorage(ctx context.Context, Req *product.CheckStorageReq) (r *product.CheckStorageResp, err error) {
+	var _args CheckStorageArgs
+	_args.Req = Req
+	var _result CheckStorageResult
+	if err = p.c.Call(ctx, "CheckStorage", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

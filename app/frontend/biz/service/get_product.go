@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
@@ -21,6 +22,7 @@ func NewGetProductService(Context context.Context, RequestContext *app.RequestCo
 
 func (h *GetProductService) Run(req *product.ProductReq) (resp map[string]any, err error) {
 	p, err := rpc.ProductClient.GetProduct(h.Context, &rpcproduct.GetProductReq{Id: req.GetId()})
+	fmt.Println(p)
 	if err != nil {
 		return nil, err
 	}

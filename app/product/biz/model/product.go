@@ -16,6 +16,7 @@ type Product struct {
 	Description string  `json:"description"`
 	Picture     string  `json:"picture"`
 	Price       float32 `json:"price"`
+	Storage     int32   `json:"storage"`
 
 	Categories []Category `json:"categories" gorm:"many2many:product_category"`
 }
@@ -107,4 +108,55 @@ func NewCachedProductQuery(ctx context.Context, db *gorm.DB, cacheClient *redis.
 type ProductMutation struct {
 	ctx context.Context
 	db  *gorm.DB
+}
+
+func (c CachedProductQuery) CheckStorage(productId int, storage int32) (err error) {
+	var product Product
+	if err != nil {
+		return
+	}
+	// redis分布式锁
+
+	// redis key
+	cachedKey := fmt.Sprintf("%s_%s_%d", c.prefix, "product_by_id", productId)
+	//cachedKeyLock :=
+
+	// get lock
+
+	// search in redis
+	cachedResult := c.cacheClient.Get(c.productQuery.ctx, cachedKey)
+	err = func() error {
+		if err := cachedResult.Err(); err != nil {
+			return err
+		}
+		cacheResultBytes, err := cachedResult.Bytes()
+		if err != nil {
+			return err
+		}
+		// redis中字符串转为product
+		err = json.Unmarshal(cacheResultBytes, &product)
+		if err != nil {
+			return err
+		}
+		return nil
+	}()
+
+	// redis中没有，直接更新DB
+	if err != nil {
+		// update DB
+		product, err = c.productQuery.GetById(productId)
+		err = c.productQuery.db.WithContext(c.productQuery.ctx).
+			Model(&Product{}).Where("id=?", productId).Update("storage", product.Storage-storage).Error
+		if err != nil {
+			return
+		}
+	}
+	product.Storage = product.Storage - storage
+	encode, err := json.Marshal(product)
+	if err != nil {
+		return
+	}
+	_ = c.cacheClient.Set(c.productQuery.ctx, cachedKey, encode, time.Hour)
+
+	return
 }

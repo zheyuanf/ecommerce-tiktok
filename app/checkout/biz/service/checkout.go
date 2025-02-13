@@ -56,7 +56,15 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		if productResp.Product == nil {
 			continue
 		}
+
 		p := productResp.Product
+
+		// 创建订单前先校验库存
+		_, err = rpc.ProductClient.CheckStorage(s.ctx, &product.CheckStorageReq{Id: p.Id, Quantity: cartItem.Quantity})
+		if err != nil {
+			continue
+		}
+
 		cost := p.Price * float32(cartItem.Quantity)
 		total += cost
 		oi = append(oi, &order.OrderItem{

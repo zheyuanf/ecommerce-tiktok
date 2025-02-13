@@ -32,6 +32,7 @@ func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *produ
 			Description: v.Description,
 			Picture:     v.Picture,
 			Price:       v.Price,
+			Storage:     v.Storage,
 		})
 	}
 

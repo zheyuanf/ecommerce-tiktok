@@ -2,9 +2,9 @@ package product
 
 import (
 	"context"
-	product "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/kitex/client/callopt"
 	"github.com/cloudwego/kitex/pkg/klog"
+	product "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product"
 )
 
 func ListProducts(ctx context.Context, req *product.ListProductsReq, callOptions ...callopt.Option) (resp *product.ListProductsResp, err error) {
@@ -29,6 +29,15 @@ func SearchProducts(ctx context.Context, req *product.SearchProductsReq, callOpt
 	resp, err = defaultClient.SearchProducts(ctx, req, callOptions...)
 	if err != nil {
 		klog.CtxErrorf(ctx, "SearchProducts call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func CheckStorage(ctx context.Context, req *product.CheckStorageReq, callOptions ...callopt.Option) (resp *product.CheckStorageResp, err error) {
+	resp, err = defaultClient.CheckStorage(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "CheckStorage call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil
