@@ -25,20 +25,30 @@ import (
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/conf"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/infra/rpc"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/middleware"
+	frontendutils "github.com/zheyuanf/ecommerce-tiktok/app/frontend/utils"
+	"github.com/zheyuanf/ecommerce-tiktok/common/mtl"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+)
+
+var (
+	ServiceName  = frontendutils.ServiceName
+	MetricsPort  = conf.GetConf().Hertz.MetricsPort
+	RegistryAddr = conf.GetConf().Hertz.RegistryAddr
 )
 
 func main() {
 	// 读取.env文件中的环境变量
 	_ = godotenv.Load()
 
+	consul, registryInfo := mtl.InitMetric(ServiceName, MetricsPort, RegistryAddr)
+	defer consul.Deregister(registryInfo)
+
 	// init rpc client
 	rpc.InitClient()
 
 	address := conf.GetConf().Hertz.Address
 	h := server.New(server.WithHostPorts(address))
-
 	// 加载模板文件
 	h.LoadHTMLGlob("template/*")
 	h.Delims("{{", "}}")

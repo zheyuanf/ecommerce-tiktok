@@ -1,11 +1,13 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
-	"github.com/zheyuanf/ecommerce-tiktok/app/cart/biz/dal"
-	"github.com/zheyuanf/ecommerce-tiktok/common/serversuite"
 	"net"
 	"time"
+
+	"github.com/joho/godotenv"
+	"github.com/zheyuanf/ecommerce-tiktok/app/cart/biz/dal"
+	"github.com/zheyuanf/ecommerce-tiktok/common/mtl"
+	"github.com/zheyuanf/ecommerce-tiktok/common/serversuite"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -18,6 +20,7 @@ import (
 )
 
 var serviceName = conf.GetConf().Kitex.Service
+var RegistryAddr = conf.GetConf().Registry.RegistryAddress[0]
 
 func main() {
 	// 加载 .env 文件中的环境变量
@@ -25,7 +28,7 @@ func main() {
 	if err != nil {
 		klog.Error(err.Error())
 	}
-
+	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, RegistryAddr)
 	// 初始化数据库连接
 	dal.Init()
 

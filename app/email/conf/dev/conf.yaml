@@ -1,6 +1,7 @@
 kitex:
   service: "email"
   address: ":8887"
+  metrics_port: ":9997"
   log_level: info
   log_file_name: "log/kitex.log"
   log_max_size: 10

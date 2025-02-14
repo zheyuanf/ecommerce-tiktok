@@ -9,12 +9,19 @@ import (
 	"github.com/cloudwego/kitex/server"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	"github.com/zheyuanf/ecommerce-tiktok/app/auth/conf"
+	"github.com/zheyuanf/ecommerce-tiktok/common/mtl"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/auth/authservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+var (
+	serviceName  = conf.GetConf().Kitex.Service
+	RegistryAddr = conf.GetConf().Registry.RegistryAddress[0]
+)
+
 func main() {
+	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, RegistryAddr)
 	opts := kitexInit()
 
 	svr := authservice.NewServer(new(AuthServiceImpl), opts...)
