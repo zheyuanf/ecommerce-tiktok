@@ -4,9 +4,9 @@ import (
 	"context"
 	product "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product"
 
+	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product/productcatalogservice"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
-	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product/productcatalogservice"
 )
 
 type RPCClient interface {
@@ -16,6 +16,9 @@ type RPCClient interface {
 	GetProduct(ctx context.Context, Req *product.GetProductReq, callOptions ...callopt.Option) (r *product.GetProductResp, err error)
 	SearchProducts(ctx context.Context, Req *product.SearchProductsReq, callOptions ...callopt.Option) (r *product.SearchProductsResp, err error)
 	CheckStorage(ctx context.Context, Req *product.CheckStorageReq, callOptions ...callopt.Option) (r *product.CheckStorageResp, err error)
+	AddProduct(ctx context.Context, Req *product.AddProductReq, callOptions ...callopt.Option) (r *product.AddProductResp, err error)
+	DeleteProduct(ctx context.Context, Req *product.DeleteProductReq, callOptions ...callopt.Option) (r *product.DeleteProductResp, err error)
+	UpdateProduct(ctx context.Context, Req *product.UpdateProductReq, callOptions ...callopt.Option) (r *product.UpdateProductResp, err error)
 }
 
 func NewRPCClient(dstService string, opts ...client.Option) (RPCClient, error) {
@@ -58,4 +61,16 @@ func (c *clientImpl) SearchProducts(ctx context.Context, Req *product.SearchProd
 
 func (c *clientImpl) CheckStorage(ctx context.Context, Req *product.CheckStorageReq, callOptions ...callopt.Option) (r *product.CheckStorageResp, err error) {
 	return c.kitexClient.CheckStorage(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) AddProduct(ctx context.Context, Req *product.AddProductReq, callOptions ...callopt.Option) (r *product.AddProductResp, err error) {
+	return c.kitexClient.AddProduct(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) DeleteProduct(ctx context.Context, Req *product.DeleteProductReq, callOptions ...callopt.Option) (r *product.DeleteProductResp, err error) {
+	return c.kitexClient.DeleteProduct(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) UpdateProduct(ctx context.Context, Req *product.UpdateProductReq, callOptions ...callopt.Option) (r *product.UpdateProductResp, err error) {
+	return c.kitexClient.UpdateProduct(ctx, Req, callOptions...)
 }

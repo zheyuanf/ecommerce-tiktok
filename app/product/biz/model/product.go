@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/redis/go-redis/v9"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 
 	"gorm.io/gorm"
 )
@@ -159,4 +160,94 @@ func (c CachedProductQuery) CheckStorage(productId int, storage int32) (err erro
 	_ = c.cacheClient.Set(c.productQuery.ctx, cachedKey, encode, time.Hour)
 
 	return
+}
+
+// 添加商品
+type ProductInsert struct {
+	ctx context.Context
+	db  *gorm.DB
+}
+
+func (a ProductInsert) AddProduct(product *Product) (uint, error) {
+	err := a.db.WithContext(a.ctx).Create(product).Error
+	if err != nil {
+		return 0, err
+	}
+	return uint(product.ID), nil
+}
+
+func NewAddProduct(ctx context.Context, db *gorm.DB) *ProductInsert {
+	return &ProductInsert{
+		ctx: ctx,
+		db:  db,
+	}
+}
+
+// 删除商品
+type ProductDelete struct {
+	ctx context.Context
+	db  *gorm.DB
+}
+
+func (d ProductDelete) DeleteProduct(productId uint) error {
+	err := d.db.WithContext(d.ctx).Exec("DELETE FROM product_category WHERE product_id = ?", productId).Error
+
+	if err != nil {
+		return err
+	}
+	err = d.db.WithContext(d.ctx).Delete(&Product{}, productId).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func NewProductDelete(ctx context.Context, db *gorm.DB) *ProductDelete {
+	return &ProductDelete{
+		ctx: ctx,
+		db:  db,
+	}
+}
+
+// 更新商品
+type ProductUpdate struct {
+	ctx context.Context
+	db  *gorm.DB
+}
+
+func (u ProductUpdate) UpdateProduct(product *Product) error {
+	return u.db.WithContext(u.ctx).Transaction(func(tx *gorm.DB) error {
+		// 先删除原有的商品分类关联
+		if err := tx.Exec("DELETE FROM product_category WHERE product_id = ?", product.ID).Error; err != nil {
+			return err
+		}
+
+		// 更新商品信息，包括关联的分类
+		if err := tx.Model(&Product{}).Where("id = ?", product.ID).Updates(map[string]interface{}{
+			"name":        product.Name,
+			"description": product.Description,
+			"picture":     product.Picture,
+			"price":       product.Price,
+			"storage":     product.Storage,
+		}).Error; err != nil {
+			return err
+		}
+
+		// 重新建立商品分类关联
+		if len(product.Categories) > 0 {
+			if err := tx.Model(product).Association("Categories").Replace(product.Categories); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+}
+
+func NewProductUpdate(ctx context.Context, db *gorm.DB) *ProductUpdate {
+	return &ProductUpdate{
+		ctx: ctx,
+		db:  db,
+	}
 }
