@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package storage;
+
+option go_package = '/storage';
+
+service FileStorageService {
+    rpc UploadFile(UploadFileRequest) returns (UploadFileResponse);
+
+    rpc NewMultiUpload(NewMultiUploadRequest) returns (NewMultiUploadResponse);
+
+    rpc AbortMultiUpload(AbortMultiUploadRequest) returns (AbortMultiUploadResponse);
+
+    rpc GetMultiUploadProgress(GetMultiUploadProgressRequest) returns (GetMultiUploadProgressResponse);
+
+    rpc MergeFileChunks(MergeFileChunksRequest) returns (MergeFileChunksResponse);
+
+    rpc GetDownloadUrl(GetDownloadUrlRequest) returns (GetDownloadUrlResponse);
+}
+
+// 文件上传请求
+message UploadFileRequest {
+    string file_name = 1; // 文件名
+    bytes file_data = 2; // 文件数据
+    string file_type = 3; // 文件类型（例如image/png, application/pdf等）
+    string checksum = 4;  // 分片的校验和（例如 MD5, SHA-1）
+}
+
+// 文件上传响应
+message UploadFileResponse {
+}
+
+// 开始新的文件分片上传请求
+message NewMultiUploadRequest {
+    string file_name = 1; // 文件名
+    string file_type = 2; // 文件类型（例如image/png, application/pdf等）
+    int32 total_chunks = 3; // 文件的总分片数
+}
+
+message URL {
+    string url = 1; // URL
+    int32 chunk_number = 2; // 分片编号，从0开始
+}
+
+// 开始新的文件分片上传响应
+message NewMultiUploadResponse {
+    string upload_id = 1; // 上传ID，用于后续的分片上传
+    repeated URL presigned_urls = 2; // 分片的预签名URL列表，用于上传分片
+}
+
+message AbortMultiUploadRequest {
+    string upload_id = 1; // 上传ID
+    string file_name = 2; // 文件名
+}
+
+message AbortMultiUploadResponse {
+}
+
+message GetMultiUploadProgressRequest {
+    string upload_id = 1; // 上传ID
+    string file_name = 2; // 文件名
+}
+
+message GetMultiUploadProgressResponse {
+    repeated int32 uploaded_chunks = 1; // 已上传的分片数量
+}
+
+// 合并文件分片请求
+message MergeFileChunksRequest {
+    string file_name = 1; // 文件名
+    string upload_id = 2; // 上传ID
+    string file_type = 3; // 文件类型（例如image/png, application/pdf等）
+    int32 total_chunks = 4; // 文件的总分片数
+}
+
+// 合并文件分片响应
+message MergeFileChunksResponse {
+    bool success = 1; // 是否成功
+    string file_url = 2; // 合并后的文件URL
+    string message = 3; // 返回的消息（例如错误信息）
+}
+
+// 获取文件上传状态请求
+message GetFileUploadStatusRequest {
+    string upload_id = 1; // 上传ID
+}
+
+// 获取文件上传状态响应
+message GetFileUploadStatusResponse {
+    bool is_completed = 1; // 文件上传是否完成
+    int32 uploaded_chunks = 2; // 已上传的分片数量
+    string message = 3; // 状态消息
+}
+
+message GetDownloadUrlRequest {
+    string file_name = 1; // 文件名
+}
+
+message GetDownloadUrlResponse {
+    string download_url = 1; // 文件下载URL
+}

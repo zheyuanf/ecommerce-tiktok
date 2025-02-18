@@ -28,6 +28,16 @@ services:
     ports:
       - "4222:4222"
       - "8222:8222"
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: ROOTNAME
+      MINIO_ROOT_PASSWORD: CHANGEME123
+    ports:
+      - "9000:9000"  # MinIO Web UI
+      - "9001:9001"  # MinIO 控制台 UI
+    command: server /data --console-address ":9001" 
   frontend:
     build:
       context: .
@@ -204,4 +214,17 @@ services:
         condition: service_started
     volumes:
       - ./app/auth/conf/dev:/opt/ecommerce-tiktok/auth/conf/dev
+  storage:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc-shotcut
+      args:
+        - SVC=storage
+    environment:
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+    volumes:
+      - ./app/storage/conf/dev:/opt/ecommerce-tiktok/storage/conf/dev
 
