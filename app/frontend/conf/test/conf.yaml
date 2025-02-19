@@ -1,5 +1,5 @@
 hertz:
-  address: ":8080"
+  address: ":18080"
   metrics_port: 8090
   enable_pprof: true
   enable_gzip: true

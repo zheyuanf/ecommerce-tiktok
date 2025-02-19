@@ -29,3 +29,23 @@ func Category(ctx context.Context, c *app.RequestContext) {
 
 	c.HTML(consts.StatusOK, "category", resp)
 }
+
+// CreateCategory .
+// @router /category [POST]
+func CreateCategory(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req category.CreateCategoryReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+
+	resp, err := service.NewCreateCategoryService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+}

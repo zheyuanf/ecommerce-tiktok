@@ -7,7 +7,9 @@ import (
 	"github.com/zheyuanf/ecommerce-tiktok/app/product/biz/model"
 	"github.com/zheyuanf/ecommerce-tiktok/app/product/conf"
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var (
@@ -31,6 +33,28 @@ func Init() {
 		&model.Product{},
 		&model.Category{},
 	)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func MockInit() {
+	DB, err = gorm.Open(sqlite.Open("file::memory:?cache=shared"),
+		&gorm.Config{
+			PrepareStmt:            true,
+			SkipDefaultTransaction: true,
+			Logger:                 logger.Default.LogMode(logger.Info),
+		})
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = DB.AutoMigrate(
+		model.Category{},
+		model.Product{},
+	)
+
 	if err != nil {
 		panic(err)
 	}

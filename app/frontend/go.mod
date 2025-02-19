@@ -16,6 +16,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/kr/pretty v0.3.1
 	github.com/redis/go-redis/v9 v9.7.0
+	github.com/zheyuanf/ecommerce-tiktok/app/checkout v0.0.0-20250219070401-19a48eb11a71
 	github.com/zheyuanf/ecommerce-tiktok/common v0.0.0-20250204145217-4443579da783
 	github.com/zheyuanf/ecommerce-tiktok/rpc_gen v0.0.0-20250204145217-4443579da783
 	go.uber.org/zap v1.27.0
