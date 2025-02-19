@@ -9,6 +9,7 @@ use (
 	./app/order
 	./app/payment
 	./app/product
+	./app/storage
 	./app/user
 	./common
 	./rpc_gen
