@@ -21,3 +21,6 @@ redis:
   username: ""
   password: ""
   db: 0
+  mtl:
+  metrics_port: ":9996"
+  end_point: "127.0.0.1:4317"

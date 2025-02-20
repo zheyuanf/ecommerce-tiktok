@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net"
 	"time"
 
@@ -11,15 +12,24 @@ import (
 	"github.com/zheyuanf/ecommerce-tiktok/app/email/conf"
 	"github.com/zheyuanf/ecommerce-tiktok/app/email/consumer"
 	"github.com/zheyuanf/ecommerce-tiktok/app/email/infra/mq"
+	"github.com/zheyuanf/ecommerce-tiktok/common/mtl"
 	"github.com/zheyuanf/ecommerce-tiktok/common/serversuite"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/email/emailservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var serviceName = conf.GetConf().Kitex.Service
+var (
+	serviceName  = conf.GetConf().Kitex.Service
+	RegistryAddr = conf.GetConf().Registry.RegistryAddress[0]
+	MetricsPort  = conf.GetConf().Mtl.MetricsPort
+	Endpoint     = conf.GetConf().Mtl.EndPoint
+)
 
 func main() {
+	mtl.InitMetric(serviceName, MetricsPort, RegistryAddr)
+	p := mtl.InitTracing(serviceName, Endpoint)
+	defer p.Shutdown(context.Background())
 	// 初始化 MQ 和 Consumer
 	mq.Init()
 	consumer.Init()

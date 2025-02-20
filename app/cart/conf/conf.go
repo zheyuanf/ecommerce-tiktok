@@ -23,6 +23,7 @@ type Config struct {
 	MySQL    MySQL    `yaml:"mysql"`
 	Redis    Redis    `yaml:"redis"`
 	Registry Registry `yaml:"registry"`
+	Mtl      Mtl      `yaml:"mtl"`
 }
 
 type MySQL struct {
@@ -45,7 +46,10 @@ type Kitex struct {
 	LogMaxBackups int    `yaml:"log_max_backups"`
 	LogMaxAge     int    `yaml:"log_max_age"`
 }
-
+type Mtl struct {
+	MetricsPort string `yaml:"metrics_port"`
+	EndPoint    string `yaml:"end_point"`
+}
 type Registry struct {
 	RegistryAddress []string `yaml:"registry_address"`
 	Username        string   `yaml:"username"`

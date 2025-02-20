@@ -24,3 +24,6 @@ redis:
 
 nats:
   address: "127.0.0.1:4222"
+mtl:
+  metrics_port: ":9995"
+  end_point: "127.0.0.1:4317"

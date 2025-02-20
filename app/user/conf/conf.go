@@ -23,12 +23,16 @@ type Config struct {
 	MySQL    MySQL    `yaml:"mysql"`
 	Redis    Redis    `yaml:"redis"`
 	Registry Registry `yaml:"registry"`
+	Mtl      Mtl      `yaml:"mtl"`
 }
 
 type MySQL struct {
 	DSN string `yaml:"dsn"`
 }
-
+type Mtl struct {
+	MetricsPort string `yaml:"metrics_port"`
+	EndPoint    string `yaml:"end_point"`
+}
 type Redis struct {
 	Address  string `yaml:"address"`
 	Username string `yaml:"username"`

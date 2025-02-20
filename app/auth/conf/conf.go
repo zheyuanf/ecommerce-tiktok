@@ -24,6 +24,7 @@ type Config struct {
 	Redis         Redis         `yaml:"redis"`
 	Registry      Registry      `yaml:"registry"`
 	Authenticator Authenticator `yaml:"authenticator"`
+	Mtl           Mtl           `yaml:"mtl"`
 }
 
 type MySQL struct {
@@ -37,6 +38,10 @@ type Redis struct {
 	DB       int    `yaml:"db"`
 }
 
+type Mtl struct {
+	MetricsPort string `yaml:"metrics_port"`
+	EndPoint    string `yaml:"end_point"`
+}
 type Kitex struct {
 	Service       string `yaml:"service"`
 	Address       string `yaml:"address"`

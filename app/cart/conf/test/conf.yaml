@@ -1,6 +1,7 @@
 kitex:
   service: "cart"
   address: ":8883"
+  metrics_port: ":9993"
   log_level: info
   log_file_name: "log/kitex.log"
   log_max_size: 10
@@ -22,3 +23,6 @@ redis:
   username: ""
   password: ""
   db: 0
+mtl:
+  metrics_port: ":9993"
+  end_point: "127.0.0.1:4317"
