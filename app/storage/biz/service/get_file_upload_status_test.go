@@ -4,15 +4,15 @@ import (
 	"context"
 	"testing"
 
-	product "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product"
+	storage "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/storage"
 )
 
-func TestGetProduct_Run(t *testing.T) {
+func TestGetFileUploadStatus_Run(t *testing.T) {
 	ctx := context.Background()
-	s := NewGetProductService(ctx)
+	s := NewGetFileUploadStatusService(ctx)
 	// init req and assert value
 
-	req := &product.GetProductReq{}
+	req := &storage.GetFileUploadStatusRequest{}
 	resp, err := s.Run(req)
 	t.Logf("err: %v", err)
 	t.Logf("resp: %v", resp)

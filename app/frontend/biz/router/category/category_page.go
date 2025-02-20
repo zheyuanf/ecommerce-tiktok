@@ -17,6 +17,7 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
+	root.POST("/category", append(_createcategoryMw(), category.CreateCategory)...)
 	{
 		_category := root.Group("/category", _categoryMw()...)
 		_category.GET("/:category", append(_category0Mw(), category.Category)...)

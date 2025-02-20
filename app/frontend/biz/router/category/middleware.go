@@ -20,3 +20,8 @@ func _category0Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _createcategoryMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

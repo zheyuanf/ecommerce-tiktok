@@ -15,11 +15,45 @@ message SearchProductsReq {
   string q = 1 [(api.query) = "q"];
 }
 
+message CreateProductReq {
+  string name = 1 [(api.body) = "name"];
+  string description = 2 [(api.body) = "description"];
+  string picture = 3 [(api.body) = "picture"];
+  float price = 4 [(api.body) = "price"];
+  repeated string categories = 5 [(api.body) = "categories"];
+}
+
+message CreateProductResp {
+  uint32 id = 1;
+}
+
+message UpdateProductReq {
+  uint32 id = 1 [(api.path) = "id"];
+  string name = 2 [(api.body) = "name"];
+  string description = 3 [(api.body) = "description"];
+  string picture = 4 [(api.body) = "picture"];
+  float price = 5 [(api.body) = "price"];
+  repeated string categories = 6 [(api.body) = "categories"];
+}
+
+message DeleteProductReq {
+  uint32 id = 1 [(api.path) = "id"];
+}
+
 service ProductService {
   rpc GetProduct(ProductReq) returns (common.Empty) {
     option (api.get) = "/product";
   }
   rpc SearchProducts(SearchProductsReq) returns (common.Empty) {
     option (api.get) = "/search";
+  }
+  rpc CreateProduct(CreateProductReq) returns (common.Empty) {
+    option (api.post) = "/product";
+  }
+  rpc UpdateProduct(UpdateProductReq) returns (common.Empty) {
+    option (api.put) = "/product/:id";
+  }
+  rpc DeleteProduct(DeleteProductReq) returns (common.Empty) {
+    option (api.delete) = "/product/:id";
   }
 }

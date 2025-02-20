@@ -18,7 +18,8 @@ func NewSearchProductsService(ctx context.Context) *SearchProductsService {
 // Run create note info
 func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *product.SearchProductsResp, err error) {
 	// Finish your business logic.
-	products, err := model.SearchProduct(mysql.DB, s.ctx, req.Query)
+	productQuery := model.NewProductQuery(s.ctx, mysql.DB)
+	products, err := productQuery.SearchProduct(req.Query)
 	if err != nil {
 		return nil, err
 	}

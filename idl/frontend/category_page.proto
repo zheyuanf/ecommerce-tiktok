@@ -11,8 +11,16 @@ message CategoryReq {
   string category = 1 [(api.path) = "category"];
 }
 
+message CreateCategoryReq {
+  string name = 1 [(api.body) = "name"];
+  string description = 2 [(api.body) = "description"];
+}
+
 service CategoryService {
   rpc Category(CategoryReq) returns (common.Empty) {
     option (api.get) = "/category/:category";
+  }
+  rpc CreateCategory(CreateCategoryReq) returns (common.Empty) {
+    option (api.post) = "/category";
   }
 }
