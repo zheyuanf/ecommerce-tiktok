@@ -7,6 +7,7 @@ import (
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/infra/rpc"
 	frontendutils "github.com/zheyuanf/ecommerce-tiktok/app/frontend/utils"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/cart"
+	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product"
 )
 
 // SendErrResponse  pack error response
@@ -36,5 +37,7 @@ func WarpResponse(ctx context.Context, c *app.RequestContext, content map[string
 	// 3. 补全返回给home模板的信息
 	content["user_id"] = ctx.Value(frontendutils.UserIdKey)
 	content["cart_num"] = cartNum
+	categoryResp, _ := rpc.ProductClient.ListCategories(ctx, &product.ListCategoriesReq{})
+	content["categories"] = categoryResp.Categories
 	return content
 }

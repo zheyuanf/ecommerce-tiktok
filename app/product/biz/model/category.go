@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -40,6 +41,12 @@ func (p CategoryQuery) GetByName(categoryName string) (*Category, error) {
 func (p CategoryQuery) CreateCategory(category *Category) (err error) {
 	result := p.db.WithContext(p.ctx).Model(&Category{}).Create(category)
 	return result.Error
+}
+
+func (p CategoryQuery) ListCategories() (categories []Category, err error) {
+	err = p.db.WithContext(p.ctx).Find(&categories).Error
+	fmt.Println(categories)
+	return categories, err
 }
 
 func NewCategoryQuery(ctx context.Context, db *gorm.DB) CategoryQuery {

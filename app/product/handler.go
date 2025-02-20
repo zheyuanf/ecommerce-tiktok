@@ -58,3 +58,10 @@ func (s *ProductCatalogServiceImpl) CreateCategory(ctx context.Context, req *pro
 
 	return resp, err
 }
+
+// ListCategories implements the ProductCatalogServiceImpl interface.
+func (s *ProductCatalogServiceImpl) ListCategories(ctx context.Context, req *product.ListCategoriesReq) (resp *product.ListCategoriesResp, err error) {
+	resp, err = service.NewListCategoriesService(ctx).Run(req)
+
+	return resp, err
+}

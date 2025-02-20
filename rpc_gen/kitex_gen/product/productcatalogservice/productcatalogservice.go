@@ -57,6 +57,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"ListCategories": kitex.NewMethodInfo(
+		listCategoriesHandler,
+		newListCategoriesArgs,
+		newListCategoriesResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 	"CreateCategory": kitex.NewMethodInfo(
 		createCategoryHandler,
 		newCreateCategoryArgs,
@@ -1048,6 +1055,159 @@ func (p *UpdateProductResult) GetResult() interface{} {
 	return p.Success
 }
 
+func listCategoriesHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(product.ListCategoriesReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(product.ProductCatalogService).ListCategories(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ListCategoriesArgs:
+		success, err := handler.(product.ProductCatalogService).ListCategories(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ListCategoriesResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newListCategoriesArgs() interface{} {
+	return &ListCategoriesArgs{}
+}
+
+func newListCategoriesResult() interface{} {
+	return &ListCategoriesResult{}
+}
+
+type ListCategoriesArgs struct {
+	Req *product.ListCategoriesReq
+}
+
+func (p *ListCategoriesArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(product.ListCategoriesReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *ListCategoriesArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *ListCategoriesArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *ListCategoriesArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ListCategoriesArgs) Unmarshal(in []byte) error {
+	msg := new(product.ListCategoriesReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ListCategoriesArgs_Req_DEFAULT *product.ListCategoriesReq
+
+func (p *ListCategoriesArgs) GetReq() *product.ListCategoriesReq {
+	if !p.IsSetReq() {
+		return ListCategoriesArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ListCategoriesArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ListCategoriesArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ListCategoriesResult struct {
+	Success *product.ListCategoriesResp
+}
+
+var ListCategoriesResult_Success_DEFAULT *product.ListCategoriesResp
+
+func (p *ListCategoriesResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(product.ListCategoriesResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *ListCategoriesResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *ListCategoriesResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *ListCategoriesResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ListCategoriesResult) Unmarshal(in []byte) error {
+	msg := new(product.ListCategoriesResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ListCategoriesResult) GetSuccess() *product.ListCategoriesResp {
+	if !p.IsSetSuccess() {
+		return ListCategoriesResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ListCategoriesResult) SetSuccess(x interface{}) {
+	p.Success = x.(*product.ListCategoriesResp)
+}
+
+func (p *ListCategoriesResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ListCategoriesResult) GetResult() interface{} {
+	return p.Success
+}
+
 func createCategoryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	switch s := arg.(type) {
 	case *streaming.Args:
@@ -1266,6 +1426,16 @@ func (p *kClient) UpdateProduct(ctx context.Context, Req *product.UpdateProductR
 	_args.Req = Req
 	var _result UpdateProductResult
 	if err = p.c.Call(ctx, "UpdateProduct", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ListCategories(ctx context.Context, Req *product.ListCategoriesReq) (r *product.ListCategoriesResp, err error) {
+	var _args ListCategoriesArgs
+	_args.Req = Req
+	var _result ListCategoriesResult
+	if err = p.c.Call(ctx, "ListCategories", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

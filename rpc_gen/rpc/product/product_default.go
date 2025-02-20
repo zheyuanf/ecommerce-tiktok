@@ -61,6 +61,15 @@ func UpdateProduct(ctx context.Context, req *product.UpdateProductReq, callOptio
 	return resp, nil
 }
 
+func ListCategories(ctx context.Context, req *product.ListCategoriesReq, callOptions ...callopt.Option) (resp *product.ListCategoriesResp, err error) {
+	resp, err = defaultClient.ListCategories(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "ListCategories call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
 func CreateCategory(ctx context.Context, req *product.CreateCategoryReq, callOptions ...callopt.Option) (resp *product.CreateCategoryResp, err error) {
 	resp, err = defaultClient.CreateCategory(ctx, req, callOptions...)
 	if err != nil {

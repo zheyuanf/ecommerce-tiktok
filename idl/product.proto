@@ -11,6 +11,7 @@ service ProductCatalogService {
   rpc AddProduct(AddProductReq) returns (AddProductResp) {}
   rpc DeleteProduct(DeleteProductReq) returns (DeleteProductResp) {}
   rpc UpdateProduct(UpdateProductReq) returns (UpdateProductResp) {}
+  rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp) {}
   rpc CreateCategory(CreateCategoryReq) returns (CreateCategoryResp) {}
 }
 
@@ -80,6 +81,13 @@ message UpdateProductReq {
 }
 
 message UpdateProductResp {
+}
+
+message ListCategoriesReq {
+}
+
+message ListCategoriesResp {
+  repeated string categories = 1;
 }
 
 message CreateCategoryReq {
