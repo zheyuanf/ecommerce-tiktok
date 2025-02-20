@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net"
 	"time"
 
@@ -10,12 +11,23 @@ import (
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	"github.com/zheyuanf/ecommerce-tiktok/app/storage/conf"
 	"github.com/zheyuanf/ecommerce-tiktok/app/storage/infra/store"
+	"github.com/zheyuanf/ecommerce-tiktok/common/mtl"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/storage/filestorageservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+var (
+	serviceName  = conf.GetConf().Kitex.Service
+	RegistryAddr = conf.GetConf().Registry.RegistryAddress[0]
+	MetricsPort  = conf.GetConf().Mtl.MetricsPort
+	Endpoint     = conf.GetConf().Mtl.EndPoint
+)
+
 func main() {
+	mtl.InitMetric(serviceName, MetricsPort, RegistryAddr)
+	p := mtl.InitTracing(serviceName, Endpoint)
+	defer p.Shutdown(context.Background())
 	opts := kitexInit()
 
 	// init minio client

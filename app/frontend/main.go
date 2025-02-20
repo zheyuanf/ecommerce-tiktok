@@ -17,26 +17,48 @@ import (
 	"github.com/hertz-contrib/gzip"
 	"github.com/hertz-contrib/logger/accesslog"
 	hertzlogrus "github.com/hertz-contrib/logger/logrus"
+	prometheus "github.com/hertz-contrib/monitor-prometheus"
+	hertzobslogrus "github.com/hertz-contrib/obs-opentelemetry/logging/logrus"
+	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
 	"github.com/hertz-contrib/pprof"
 	"github.com/joho/godotenv"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/biz/router"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/conf"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/infra/rpc"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/middleware"
+	frontendutils "github.com/zheyuanf/ecommerce-tiktok/app/frontend/utils"
+	"github.com/zheyuanf/ecommerce-tiktok/common/mtl"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+)
+
+var (
+	ServiceName  = frontendutils.ServiceName
+	MetricsPort  = conf.GetConf().Mtl.MetricsPort
+	Endpoint     = conf.GetConf().Mtl.EndPoint
+	RegistryAddr = conf.GetConf().Hertz.RegistryAddr
 )
 
 func main() {
 	// 读取.env文件中的环境变量
 	_ = godotenv.Load()
-
+	consul, registerInfo := mtl.InitMetric(ServiceName, MetricsPort, RegistryAddr)
+	defer consul.Deregister(registerInfo)
+	p := mtl.InitTracing(ServiceName, Endpoint)
+	defer p.Shutdown(context.Background())
 	// init rpc client
 	rpc.InitClient()
 
 	address := conf.GetConf().Hertz.Address
-	h := server.New(server.WithHostPorts(address))
+	tracer, cfg := hertztracing.NewServerTracer()
+	h := server.New(server.WithHostPorts(address),
+		server.WithTracer(prometheus.NewServerTracer("", "", prometheus.WithDisableServer(true),
+			prometheus.WithRegistry(mtl.Registry),
+		)),
+		tracer,
+	)
 
+	h.Use(hertztracing.ServerMiddleware(cfg))
 	// 加载模板文件
 	h.LoadHTMLGlob("template/*")
 	h.Delims("{{", "}}")
@@ -51,17 +73,20 @@ func main() {
 	router.GeneratedRegister(h)
 
 	h.GET("sign-in", func(ctx context.Context, c *app.RequestContext) {
+		hlog.CtxInfof(ctx, "CloudWeGo shop sign-in page")
 		c.HTML(consts.StatusOK, "sign-in", utils.H{
 			"title": "Sign in",
 			"next":  c.Query("next"),
 		})
 	})
 	h.GET("sign-up", func(ctx context.Context, c *app.RequestContext) {
+		hlog.CtxInfof(ctx, "CloudWeGo shop sign-up page")
 		c.HTML(consts.StatusOK, "sign-up", utils.H{
 			"title": "Sign up",
 		})
 	})
 	h.GET("/redirect", func(ctx context.Context, c *app.RequestContext) {
+		hlog.CtxInfof(ctx, "CloudWeGo shop about page")
 		c.HTML(consts.StatusOK, "about", utils.H{
 			"title": "Error",
 		})
@@ -83,9 +108,15 @@ Disallow: /`))
 
 func registerMiddleware(h *server.Hertz) {
 	// log
-	logger := hertzlogrus.NewLogger()
+	logger := hertzobslogrus.NewLogger(hertzobslogrus.WithLogger(hertzlogrus.NewLogger().Logger()))
 	hlog.SetLogger(logger)
 	hlog.SetLevel(conf.LogLevel())
+	var flushInterval time.Duration
+	if os.Getenv("GO_ENV") == "online" {
+		flushInterval = time.Minute
+	} else {
+		flushInterval = time.Second
+	}
 	asyncWriter := &zapcore.BufferedWriteSyncer{
 		WS: zapcore.AddSync(&lumberjack.Logger{
 			Filename:   conf.GetConf().Hertz.LogFileName,
@@ -93,7 +124,7 @@ func registerMiddleware(h *server.Hertz) {
 			MaxBackups: conf.GetConf().Hertz.LogMaxBackups,
 			MaxAge:     conf.GetConf().Hertz.LogMaxAge,
 		}),
-		FlushInterval: time.Minute,
+		FlushInterval: flushInterval,
 	}
 	hlog.SetOutput(asyncWriter)
 	h.OnShutdown = append(h.OnShutdown, func(ctx context.Context) {

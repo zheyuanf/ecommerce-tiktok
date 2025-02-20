@@ -1,5 +1,5 @@
 hertz:
-  address: ":18080"
+  address: ":8080"
   metrics_port: 8090
   enable_pprof: true
   enable_gzip: true
@@ -19,3 +19,6 @@ redis:
   username: ""
   password: ""
   db: 0
+mtl:
+  metrics_port: 8090
+  end_point: "127.0.0.1:4317"

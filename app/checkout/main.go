@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net"
 	"time"
 
@@ -13,13 +14,19 @@ import (
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/conf"
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/infra/mq"
 	"github.com/zheyuanf/ecommerce-tiktok/app/checkout/infra/rpc"
+	"github.com/zheyuanf/ecommerce-tiktok/common/mtl"
 	"github.com/zheyuanf/ecommerce-tiktok/common/serversuite"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/checkout/checkoutservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var serviceName = conf.GetConf().Kitex.Service
+var (
+	serviceName  = conf.GetConf().Kitex.Service
+	RegistryAddr = conf.GetConf().Registry.RegistryAddress[0]
+	MetricsPort  = conf.GetConf().Mtl.MetricsPort
+	Endpoint     = conf.GetConf().Mtl.EndPoint
+)
 
 func main() {
 	// 加载 .env 文件中的环境变量
@@ -27,7 +34,9 @@ func main() {
 	if err != nil {
 		klog.Error(err.Error())
 	}
-
+	mtl.InitMetric(serviceName, MetricsPort, RegistryAddr)
+	p := mtl.InitTracing(serviceName, Endpoint)
+	defer p.Shutdown(context.Background())
 	// 初始化数据库连接
 	dal.Init()
 	// 初始化 rpc 客户端连接

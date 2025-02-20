@@ -24,3 +24,6 @@ redis:
 
 nats:
   address: "nats:4222"
+mtl:
+  metrics_port: ":9997"
+  end_point: "jaeger-all-in-one:4317"

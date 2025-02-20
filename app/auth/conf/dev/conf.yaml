@@ -24,3 +24,6 @@ redis:
 
 authenticator:
   sign_key: "ecommerce_sign_key"
+mtl:
+  metrics_port: ":9998"
+  end_point: "jaeger-all-in-one:4317"

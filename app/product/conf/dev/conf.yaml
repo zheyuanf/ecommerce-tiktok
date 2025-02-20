@@ -21,3 +21,6 @@ redis:
   username: ""
   password: ""
   db: 0
+mtl:
+  metrics_port: ":9992"
+  end_point: "jaeger-all-in-one:4317"

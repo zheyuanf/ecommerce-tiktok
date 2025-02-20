@@ -10,6 +10,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"gorm.io/plugin/opentelemetry/tracing"
 )
 
 var (
@@ -29,7 +30,9 @@ func Init() error {
 		log.Printf("Failed to open database connection: %v", err)
 		return fmt.Errorf("failed to open database connection: %w", err)
 	}
-
+	if err := DB.Use(tracing.NewPlugin(tracing.WithoutMetrics())); err != nil {
+		panic(err)
+	}
 	// 自动同步表结构， 没有则创建表
 	err = DB.AutoMigrate(&model.Cart{})
 	if err != nil {

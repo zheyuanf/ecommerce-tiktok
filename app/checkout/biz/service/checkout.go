@@ -16,6 +16,8 @@ import (
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/order"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/payment"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -125,7 +127,8 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		Subject:     "You just created an order in Ecommerce shop",
 		Content:     "You just created an order in Ecommerce shop",
 	})
-	msg := &nats.Msg{Subject: "email", Data: data}
+	msg := &nats.Msg{Subject: "email", Data: data, Header: make(nats.Header)}
+	otel.GetTextMapPropagator().Inject(s.ctx, propagation.HeaderCarrier(msg.Header))
 	_ = mq.Nc.PublishMsg(msg)
 
 	// 6. 付款成功，修改订单状态
