@@ -1,15 +1,14 @@
 package conf
 
 import (
-	"io/ioutil"
+	"fmt"
+	"github.com/kitex-contrib/config-consul/consul"
+	"github.com/kr/pretty"
+	"gopkg.in/yaml.v2"
 	"os"
-	"path/filepath"
 	"sync"
 
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/kr/pretty"
-	"gopkg.in/validator.v2"
-	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -59,25 +58,42 @@ func GetConf() *Config {
 }
 
 func initConf() {
-	prefix := "conf"
-	confFileRelPath := filepath.Join(prefix, filepath.Join(GetEnv(), "conf.yaml"))
-	content, err := ioutil.ReadFile(confFileRelPath)
+	// 从consul中加载yaml文件
+	client, err := consul.NewClient(consul.Options{
+		Addr: "consul:8500",
+	})
 	if err != nil {
 		panic(err)
 	}
-	conf = new(Config)
-	err = yaml.Unmarshal(content, conf)
-	if err != nil {
-		klog.Error("parse yaml error - %v", err)
-		panic(err)
-	}
-	if err := validator.Validate(conf); err != nil {
-		klog.Error("validate config error - %v", err)
-		panic(err)
-	}
-	conf.Env = GetEnv()
-	pretty.Printf("%+v\n", conf)
+	client.RegisterConfigCallback("product/test.yaml", consul.AllocateUniqueID(), func(s string, parser consul.ConfigParser) {
+		err = yaml.Unmarshal([]byte(s), &conf)
+		if err != nil {
+			fmt.Println(err)
+		}
+		pretty.Printf("%+v\n", conf)
+	})
 }
+
+//func initConf() {
+//	prefix := "conf"
+//	confFileRelPath := filepath.Join(prefix, filepath.Join(GetEnv(), "conf.yaml"))
+//	content, err := ioutil.ReadFile(confFileRelPath)
+//	if err != nil {
+//		panic(err)
+//	}
+//	conf = new(Config)
+//	err = yaml.Unmarshal(content, conf)
+//	if err != nil {
+//		klog.Error("parse yaml error - %v", err)
+//		panic(err)
+//	}
+//	if err := validator.Validate(conf); err != nil {
+//		klog.Error("validate config error - %v", err)
+//		panic(err)
+//	}
+//	conf.Env = GetEnv()
+//	pretty.Printf("%+v\n", conf)
+//}
 
 func GetEnv() string {
 	e := os.Getenv("GO_ENV")

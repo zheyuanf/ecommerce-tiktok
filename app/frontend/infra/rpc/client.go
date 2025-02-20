@@ -5,10 +5,12 @@ import (
 	"github.com/cloudwego/kitex/pkg/circuitbreak"
 	"github.com/cloudwego/kitex/pkg/fallback"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/kitex-contrib/config-consul/consul"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product"
 	"sync"
 
 	"github.com/cloudwego/kitex/client"
+	consulclient "github.com/kitex-contrib/config-consul/client"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/conf"
 	frontendutils "github.com/zheyuanf/ecommerce-tiktok/app/frontend/utils"
 	"github.com/zheyuanf/ecommerce-tiktok/common/clientsuite"
@@ -47,6 +49,12 @@ func InitClient() {
 }
 
 func initProductClient() {
+	consulClient, err := consul.NewClient(consul.Options{
+		Addr: "consul:8500",
+	})
+	if err != nil {
+		panic(err)
+	}
 	// 熔断配置
 	cbs := circuitbreak.NewCBSuite(func(ri rpcinfo.RPCInfo) string {
 		return circuitbreak.RPCInfo2Key(ri)
@@ -79,7 +87,9 @@ func initProductClient() {
 						}, nil
 					}),
 			),
-		))
+		), //全局配置
+		client.WithSuite(consulclient.NewSuite("product", frontendutils.ServiceName, consulClient)),
+	)
 	frontendutils.MustHandleError(err)
 }
 
