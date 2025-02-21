@@ -24,6 +24,11 @@ func (x *DeliverTokenReq) FastRead(buf []byte, _type int8, number int32) (offset
 		if err != nil {
 			goto ReadFieldError
 		}
+	case 3:
+		offset, err = x.fastReadField3(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -43,6 +48,11 @@ func (x *DeliverTokenReq) fastReadField1(buf []byte, _type int8) (offset int, er
 }
 
 func (x *DeliverTokenReq) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.Role, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *DeliverTokenReq) fastReadField3(buf []byte, _type int8) (offset int, err error) {
 	x.ExpireAt, offset, err = fastpb.ReadInt64(buf, _type)
 	return offset, err
 }
@@ -109,6 +119,11 @@ func (x *VerifyResp) FastRead(buf []byte, _type int8, number int32) (offset int,
 		if err != nil {
 			goto ReadFieldError
 		}
+	case 3:
+		offset, err = x.fastReadField3(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -132,12 +147,18 @@ func (x *VerifyResp) fastReadField2(buf []byte, _type int8) (offset int, err err
 	return offset, err
 }
 
+func (x *VerifyResp) fastReadField3(buf []byte, _type int8) (offset int, err error) {
+	x.Role, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
 func (x *DeliverTokenReq) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
 	offset += x.fastWriteField1(buf[offset:])
 	offset += x.fastWriteField2(buf[offset:])
+	offset += x.fastWriteField3(buf[offset:])
 	return offset
 }
 
@@ -150,10 +171,18 @@ func (x *DeliverTokenReq) fastWriteField1(buf []byte) (offset int) {
 }
 
 func (x *DeliverTokenReq) fastWriteField2(buf []byte) (offset int) {
+	if x.Role == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 2, x.GetRole())
+	return offset
+}
+
+func (x *DeliverTokenReq) fastWriteField3(buf []byte) (offset int) {
 	if x.ExpireAt == 0 {
 		return offset
 	}
-	offset += fastpb.WriteInt64(buf[offset:], 2, x.GetExpireAt())
+	offset += fastpb.WriteInt64(buf[offset:], 3, x.GetExpireAt())
 	return offset
 }
 
@@ -195,6 +224,7 @@ func (x *VerifyResp) FastWrite(buf []byte) (offset int) {
 	}
 	offset += x.fastWriteField1(buf[offset:])
 	offset += x.fastWriteField2(buf[offset:])
+	offset += x.fastWriteField3(buf[offset:])
 	return offset
 }
 
@@ -214,12 +244,21 @@ func (x *VerifyResp) fastWriteField2(buf []byte) (offset int) {
 	return offset
 }
 
+func (x *VerifyResp) fastWriteField3(buf []byte) (offset int) {
+	if x.Role == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 3, x.GetRole())
+	return offset
+}
+
 func (x *DeliverTokenReq) Size() (n int) {
 	if x == nil {
 		return n
 	}
 	n += x.sizeField1()
 	n += x.sizeField2()
+	n += x.sizeField3()
 	return n
 }
 
@@ -232,10 +271,18 @@ func (x *DeliverTokenReq) sizeField1() (n int) {
 }
 
 func (x *DeliverTokenReq) sizeField2() (n int) {
+	if x.Role == "" {
+		return n
+	}
+	n += fastpb.SizeString(2, x.GetRole())
+	return n
+}
+
+func (x *DeliverTokenReq) sizeField3() (n int) {
 	if x.ExpireAt == 0 {
 		return n
 	}
-	n += fastpb.SizeInt64(2, x.GetExpireAt())
+	n += fastpb.SizeInt64(3, x.GetExpireAt())
 	return n
 }
 
@@ -277,6 +324,7 @@ func (x *VerifyResp) Size() (n int) {
 	}
 	n += x.sizeField1()
 	n += x.sizeField2()
+	n += x.sizeField3()
 	return n
 }
 
@@ -296,9 +344,18 @@ func (x *VerifyResp) sizeField2() (n int) {
 	return n
 }
 
+func (x *VerifyResp) sizeField3() (n int) {
+	if x.Role == "" {
+		return n
+	}
+	n += fastpb.SizeString(3, x.GetRole())
+	return n
+}
+
 var fieldIDToName_DeliverTokenReq = map[int32]string{
 	1: "UserId",
-	2: "ExpireAt",
+	2: "Role",
+	3: "ExpireAt",
 }
 
 var fieldIDToName_VerifyTokenReq = map[int32]string{
@@ -312,4 +369,5 @@ var fieldIDToName_DeliveryResp = map[int32]string{
 var fieldIDToName_VerifyResp = map[int32]string{
 	1: "Res",
 	2: "UserId",
+	3: "Role",
 }

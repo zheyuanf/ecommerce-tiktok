@@ -28,7 +28,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		c.HTML(consts.StatusOK, "sign-up", hertzUtils.H{"error": err})
 		return
 	}
-	c.Redirect(consts.StatusFound, []byte("/"))
+	c.Redirect(consts.StatusFound, []byte("/sign-in"))
 }
 
 // Login .
@@ -44,7 +44,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 
 	resp, err := service.NewLoginService(ctx, c).Run(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		c.HTML(consts.StatusOK, "sign-in", hertzUtils.H{"error": err})
 		return
 	}
 	c.Redirect(consts.StatusFound, []byte(resp))

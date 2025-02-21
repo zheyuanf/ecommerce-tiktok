@@ -4,6 +4,7 @@ package product
 
 import (
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/middleware"
 )
 
 func rootMw() []app.HandlerFunc {
@@ -32,16 +33,19 @@ func _productMw() []app.HandlerFunc {
 }
 
 func _updateproductMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		middleware.CasbinCheck(),
+	}
 }
 
 func _deleteproductMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		middleware.CasbinCheck(),
+	}
 }
 
 func _createproductMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		middleware.CasbinCheck(),
+	}
 }

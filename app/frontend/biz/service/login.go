@@ -32,6 +32,7 @@ func (h *LoginService) Run(req *auth.LoginReq) (resp string, err error) {
 	// 2. 分发token
 	authResp, err := rpc.AuthClient.DeliverTokenByRPC(h.Context, &rpcauth.DeliverTokenReq{
 		UserId:   userResp.UserId,
+		Role:     userResp.Role,
 		ExpireAt: time.Now().Add(time.Hour * 24).Unix(),
 	})
 	if err != nil {

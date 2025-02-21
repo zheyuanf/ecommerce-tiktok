@@ -2,12 +2,12 @@ package service
 
 import (
 	"context"
-	"fmt"
+	"strconv"
+
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	frontendutils "github.com/zheyuanf/ecommerce-tiktok/app/frontend/utils"
 	rpccart "github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/cart"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product"
-	"strconv"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	common "github.com/zheyuanf/ecommerce-tiktok/app/frontend/hertz_gen/frontend/common"
@@ -50,9 +50,6 @@ func (h *GetCartService) Run(req *common.Empty) (resp map[string]any, err error)
 			"Picture":     p.Picture,
 			"Qty":         strconv.Itoa(int(item.Quantity)),
 		})
-		fmt.Println(item.Quantity)
-		fmt.Println(strconv.Itoa(int(item.Quantity)))
-		fmt.Println(items)
 		total += float64(item.Quantity) * float64(p.Price)
 	}
 	return utils.H{
