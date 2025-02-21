@@ -22,15 +22,13 @@ func AddCartItem(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	//resp := &common.Empty{}
 	_, err = service.NewAddCartItemService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
-
-	c.Redirect(consts.StatusFound, []byte("/cart"))
-	//utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+	referer := c.Request.Header.Get("Referer")
+	c.Redirect(consts.StatusFound, []byte(referer))
 }
 
 // GetCart .
