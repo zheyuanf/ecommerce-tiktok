@@ -27,7 +27,7 @@ func CasbinInit() {
 }
 
 // 添加权限
-func AddCasbin(roleName, path, method string) bool {
+func AddPolicy(roleName, path, method string) bool {
 	b, err := CasbinEnforcer.AddPolicy(roleName, path, method)
 	if err != nil {
 		return false
@@ -36,10 +36,22 @@ func AddCasbin(roleName, path, method string) bool {
 }
 
 // 添加角色下的用户
-func AddRoleForUser(roleName string, userName string) bool {
+func AddRoleForUser(roleName string, userName string) (bool, error) {
 	b, err := CasbinEnforcer.AddRoleForUser(userName, roleName)
 	if err != nil {
-		return false
+		return false, err
 	}
-	return b
+	return b, nil
+}
+
+// 检查权限
+func CheckPermissionForRole(role, path, method string) (bool, error) {
+	b, err := CasbinEnforcer.Enforce(role, path, method)
+	return b, err
+}
+
+// 检查用户权限
+func CheckPermissionForUser(userName, path, method string) (bool, error) {
+	b, err := CasbinEnforcer.Enforce(userName, path, method)
+	return b, err
 }

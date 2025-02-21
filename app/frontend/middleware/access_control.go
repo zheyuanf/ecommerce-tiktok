@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/infra/casbin"
@@ -10,16 +12,16 @@ import (
 
 func CasbinCheck() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
-		role := ctx.Value(utils.UserRoleKey).(string)
-		b, err := casbin.CasbinEnforcer.Enforce(role, string(c.Request.URI().Path()), string(c.Request.Method()))
+		userId := ctx.Value(utils.UserIdKey).(int32)
+		fmt.Println(strconv.Itoa(int(userId)), string(c.Request.URI().Path()), string(c.Request.Method()))
+		b, err := casbin.CheckPermissionForUser(strconv.Itoa(int(userId)), string(c.Request.URI().Path()), string(c.Request.Method()))
+		fmt.Println(b)
 		if err != nil || !b {
 			byteRef := c.GetHeader("Referer")
 			ref := string(byteRef)
 			next := "/sign-in"
-			if ref != "" {
-				if utils.ValidateNext(ref) {
-					next = ref
-				}
+			if ref != "" && utils.ValidateNext(ref) {
+				next = ref
 			}
 			c.Redirect(302, []byte(next))
 			c.Abort()

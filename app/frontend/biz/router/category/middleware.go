@@ -4,6 +4,7 @@ package category
 
 import (
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/middleware"
 )
 
 func rootMw() []app.HandlerFunc {
@@ -23,5 +24,7 @@ func _category0Mw() []app.HandlerFunc {
 
 func _createcategoryMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		middleware.CasbinCheck(),
+	}
 }
