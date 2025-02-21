@@ -24,3 +24,9 @@ redis:
 
 nats:
   address: "127.0.0.1:4222"
+
+email:
+  host: "smtp.163.com"
+  port: 465
+  username: "abcde706@163.com"
+  password: "JYafnACEvDNRiu9g"

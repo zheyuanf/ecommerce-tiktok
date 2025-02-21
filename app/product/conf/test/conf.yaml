@@ -9,7 +9,7 @@ kitex:
 
 registry:
   registry_address:
-    - consul:8500
+    - 127.0.0.1:8500
   username: ""
   password: ""
 
@@ -17,7 +17,7 @@ mysql:
   dsn: "%s:%s@tcp(%s:3306)/product?charset=utf8mb4&parseTime=True&loc=Local"
 
 redis:
-  address: "redis:6379"
+  address: "127.0.0.1:6379"
   username: ""
   password: ""
   db: 0

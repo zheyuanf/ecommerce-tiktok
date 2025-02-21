@@ -32,6 +32,7 @@ var (
 	err            error
 	registryAddr   string
 	commonSuite    client.Option
+	consulClient   consul.Client
 )
 
 func InitClient() {
@@ -41,6 +42,12 @@ func InitClient() {
 			RegistryAddr:       registryAddr,
 			CurrentServiceName: frontendutils.ServiceName,
 		})
+		consulClient, err = consul.NewClient(consul.Options{
+			Addr: conf.GetConf().Registry.RegistryAddress[0],
+		})
+		if err != nil {
+			panic(err)
+		}
 		initProductClient()
 		initUserClient()
 		initCartClient()
@@ -50,18 +57,12 @@ func InitClient() {
 }
 
 func initProductClient() {
-	consulClient, err := consul.NewClient(consul.Options{
-		Addr: "consul:8500",
-	})
-	if err != nil {
-		panic(err)
-	}
 	// 熔断配置
 	cbs := circuitbreak.NewCBSuite(func(ri rpcinfo.RPCInfo) string {
 		return circuitbreak.RPCInfo2Key(ri)
 	})
 	cbs.UpdateServiceCBConfig(
-		"frontend/product/GetProduct",
+		"frontend/product/GetProduct", // key格式 fromServiceName/toServiceName/method
 		circuitbreak.CBConfig{Enable: true, ErrRate: 0.5, MinSample: 2},
 	)
 	ProductClient, err = productcatalogservice.NewClient(
