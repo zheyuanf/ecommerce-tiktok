@@ -2,12 +2,13 @@ package rpc
 
 import (
 	"context"
+	"sync"
+
 	"github.com/cloudwego/kitex/pkg/circuitbreak"
 	"github.com/cloudwego/kitex/pkg/fallback"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/kitex-contrib/config-consul/consul"
 	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/product"
-	"sync"
 
 	"github.com/cloudwego/kitex/client"
 	consulclient "github.com/kitex-contrib/config-consul/client"
@@ -59,10 +60,16 @@ func initProductClient() {
 	cbs := circuitbreak.NewCBSuite(func(ri rpcinfo.RPCInfo) string {
 		return circuitbreak.RPCInfo2Key(ri)
 	})
-	cbs.UpdateServiceCBConfig("frontend/product/GetProduct",
-		circuitbreak.CBConfig{Enable: true, ErrRate: 0.5, MinSample: 2})
-	ProductClient, err = productcatalogservice.NewClient("product", commonSuite,
-		client.WithCircuitBreaker(cbs), client.WithFallback(
+	cbs.UpdateServiceCBConfig(
+		"frontend/product/GetProduct",
+		circuitbreak.CBConfig{Enable: true, ErrRate: 0.5, MinSample: 2},
+	)
+	ProductClient, err = productcatalogservice.NewClient(
+		"product", commonSuite,
+		// 熔断配置 GetProduct方法
+		client.WithCircuitBreaker(cbs),
+		// 降级配置 ListProducts方法
+		client.WithFallback(
 			fallback.NewFallbackPolicy(
 				fallback.UnwrapHelper(
 					func(ctx context.Context, req, resp interface{}, err error) (fbResp interface{}, fbErr error) {
