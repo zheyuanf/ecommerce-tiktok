@@ -18,7 +18,7 @@ func NewDeliverTokenByRPCService(ctx context.Context) *DeliverTokenByRPCService 
 // Run create note info
 func (s *DeliverTokenByRPCService) Run(req *auth.DeliverTokenReq) (resp *auth.DeliveryResp, err error) {
 	// 生成token，有效期为24小时
-	token, err := token.TokenAuthenticator.GenerateToken(req.UserId, time.Unix(req.ExpireAt, 0))
+	token, err := token.TokenAuthenticator.GenerateToken(req.UserId, req.Role, time.Unix(req.ExpireAt, 0))
 	if err != nil {
 		return nil, err
 	}

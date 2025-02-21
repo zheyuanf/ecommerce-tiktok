@@ -9,7 +9,11 @@ import (
 
 func rootMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{middleware.JWTAuth()}
+
+	return []app.HandlerFunc{
+		middleware.JWTAuth(),
+		middleware.CasbinCheck(),
+	}
 }
 
 func _checkoutMw() []app.HandlerFunc {

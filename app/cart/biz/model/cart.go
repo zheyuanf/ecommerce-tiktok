@@ -43,7 +43,7 @@ func EmptyCart(ctx context.Context, db *gorm.DB, userId uint32) error {
 
 func GetCartByUserId(ctx context.Context, db *gorm.DB, userId uint32) ([]*Cart, error) {
 	var carts []*Cart
-	err := db.WithContext(ctx).Model(&Cart{}).Where(&Cart{UserId: userId}).Find(&carts).Error
+	err := db.WithContext(ctx).Model(&Cart{}).Where("user_id=?", userId).Find(&carts).Error
 
 	return carts, err
 }
