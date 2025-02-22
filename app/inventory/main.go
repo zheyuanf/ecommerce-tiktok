@@ -7,11 +7,12 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
-	"github.com/zheyuanf/ecommerce-tiktok/app/storage/conf"
-	"github.com/zheyuanf/ecommerce-tiktok/app/storage/infra/store"
+	"github.com/zheyuanf/ecommerce-tiktok/app/inventory/biz/dal"
+	"github.com/zheyuanf/ecommerce-tiktok/app/inventory/conf"
 	"github.com/zheyuanf/ecommerce-tiktok/common/serversuite"
-	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/storage/filestorageservice"
+	"github.com/zheyuanf/ecommerce-tiktok/rpc_gen/kitex_gen/inventory/inventoryservice"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -19,14 +20,20 @@ import (
 var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
+	// 加载 .env 文件中的环境变量
+	err := godotenv.Load()
+	if err != nil {
+		klog.Error(err.Error())
+	}
+
+	// 初始化数据库连接
+	dal.Init()
+
 	opts := kitexInit()
 
-	// init minio client
-	store.Init()
+	svr := inventoryservice.NewServer(new(InventoryServiceImpl), opts...)
 
-	svr := filestorageservice.NewServer(new(FileStorageServiceImpl), opts...)
-
-	err := svr.Run()
+	err = svr.Run()
 	if err != nil {
 		klog.Error(err.Error())
 	}

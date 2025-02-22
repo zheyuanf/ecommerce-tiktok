@@ -228,4 +228,16 @@ services:
         condition: service_started
     volumes:
       - ./app/storage/conf/dev:/opt/ecommerce-tiktok/storage/conf/dev
-
+  inventory:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile.svc-shotcut
+      args:
+        - SVC=inventory
+    environment:
+      - GO_ENV=dev
+    depends_on:
+      consul:
+        condition: service_started
+    volumes:
+      - ./app/inventory/conf/dev:/opt/ecommerce-tiktok/inventory/conf/dev
