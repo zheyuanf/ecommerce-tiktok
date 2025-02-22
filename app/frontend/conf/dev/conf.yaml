@@ -19,3 +19,9 @@ redis:
   username: ""
   password: ""
   db: 0
+
+registry:
+  registry_address:
+    - consul:8500
+  username: ""
+  password: ""

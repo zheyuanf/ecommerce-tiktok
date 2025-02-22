@@ -21,3 +21,9 @@ redis:
   username: ""
   password: ""
   db: 0
+
+email:
+  host: "smtp.163.com"
+  port: 465
+  username: "abcde706@163.com"
+  password: "JYafnACEvDNRiu9g"

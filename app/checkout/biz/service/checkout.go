@@ -119,7 +119,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 
 	// 5. 邮件通知用户，向mq生产消息
 	data, _ := proto.Marshal(&email.EmailReq{
-		From:        "from@example.com",
+		From:        "abcde706@163.com",
 		To:          req.Email,
 		ContentType: "text/plain",
 		Subject:     "You just created an order in Ecommerce shop",

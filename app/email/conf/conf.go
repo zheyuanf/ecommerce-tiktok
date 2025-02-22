@@ -24,6 +24,7 @@ type Config struct {
 	Redis    Redis    `yaml:"redis"`
 	Registry Registry `yaml:"registry"`
 	Nats     Nats     `yaml:"nats"`
+	Email    Email    `yaml:"email"`
 }
 
 type MySQL struct {
@@ -55,6 +56,13 @@ type Registry struct {
 
 type Nats struct {
 	Address string `yaml:"address"`
+}
+
+type Email struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 // GetConf gets configuration instance
