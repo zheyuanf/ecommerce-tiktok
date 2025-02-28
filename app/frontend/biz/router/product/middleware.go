@@ -3,8 +3,12 @@
 package product
 
 import (
+	"context"
+	"strconv"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/middleware"
+	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/utils"
 )
 
 func rootMw() []app.HandlerFunc {
@@ -17,14 +21,15 @@ func _getproductMw() []app.HandlerFunc {
 	return nil
 }
 
-func _searchproducsMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
 func _searchproductsMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	f := func(ctx context.Context, c *app.RequestContext) string {
+		userId := ctx.Value(utils.UserIdKey).(int32)
+		return strconv.Itoa(int(userId))
+	}
+	return []app.HandlerFunc{
+		middleware.FlowPeriodLimit("search_product", f),
+	}
 }
 
 func _productMw() []app.HandlerFunc {

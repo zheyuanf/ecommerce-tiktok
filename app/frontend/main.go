@@ -22,6 +22,7 @@ import (
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/biz/router"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/conf"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/infra/casbin"
+	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/infra/limit"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/infra/rpc"
 	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/middleware"
 	"go.uber.org/zap/zapcore"
@@ -37,6 +38,9 @@ func main() {
 
 	// init casbin
 	casbin.CasbinInit()
+
+	// init limit
+	limit.InitLimit()
 
 	address := conf.GetConf().Hertz.Address
 	h := server.New(server.WithHostPorts(address))
