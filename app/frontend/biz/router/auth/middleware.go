@@ -3,12 +3,28 @@
 package auth
 
 import (
+	"context"
+	"strings"
+
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/zheyuanf/ecommerce-tiktok/app/frontend/middleware"
 )
 
 func rootMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	f := func(ct context.Context, c *app.RequestContext) string {
+		ip := c.Request.Header.Get("X-Forwarded-For")
+		if ip == "" {
+			ip = c.ClientIP()
+		} else {
+			ips := strings.Split(ip, ",")
+			ip = ips[0]
+		}
+		return ip
+	}
+	return []app.HandlerFunc{
+		middleware.FlowPeriodLimit("auth", f),
+	}
 }
 
 func _authMw() []app.HandlerFunc {
